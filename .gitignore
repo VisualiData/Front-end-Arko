@@ -1,7 +1,8 @@
 .DS_Store
 node_modules
-npm-debug.log
+*.log
 bower_components
 dist
 *.swp
 .idea
+*.exe*

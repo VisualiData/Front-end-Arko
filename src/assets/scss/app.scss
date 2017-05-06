@@ -140,7 +140,7 @@ $app-dashboard-top-nav-height: 55px;
   transition: all $offcanvas-transition-length $offcanvas-transition-timing;
 
 
-  .app-dashboard-open-sidebar, .app-dashboard-close-sidebar{
+  .app-dashboard-open-sidebar, .app-dashboard-close-sidebar, .sidebar-title{
     align-items: baseline;
     display: flex;
     justify-content: space-between;
