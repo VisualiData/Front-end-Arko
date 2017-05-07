@@ -12,6 +12,11 @@ func home(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, r)
 }
 
+func dashboard(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("dist/dashboard.html")
+	t.Execute(w, r)
+}
+
 func test(w http.ResponseWriter, r *http.Request) {
 
 	t, _ := template.ParseFiles("dist/index.html")
@@ -40,6 +45,7 @@ func main(){
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
 
 	r.HandleFunc("/", home)
+	r.HandleFunc("/dashboard", dashboard)
 	r.HandleFunc("/test", test)
 	r.HandleFunc("/floorplan/{house}", house).Methods("GET")
 	r.HandleFunc("/floorplan/{house}/{floor}", house).Methods("GET")
