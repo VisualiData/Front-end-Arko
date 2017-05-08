@@ -1,0 +1,106 @@
+
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VisualiData</title>
+  <link rel="stylesheet" href="assets/css/app.css">
+</head>
+
+<body>
+
+   <div class="app-dashboard shrink-medium">
+  <div class="row expanded app-dashboard-top-nav-bar">
+    <div class="columns medium-2">
+      <button data-toggle="app-dashboard-sidebar" class="menu-icon hide-for-medium"></button>
+      <a class="app-dashboard-logo" href="/">Visualidata</a>
+    </div>
+    <!-- <div class="columns show-for-medium">
+      <div class="app-dashboard-search-bar-container">
+        <input class="app-dashboard-search" type="search" placeholder="Search">
+        <i class="app-dashboard-search-icon fa fa-search"></i>
+      </div>
+    </div> -->
+    <div class="columns shrink app-dashboard-top-bar-actions">
+      <a href="dashboard.html" class="white_text"><button href="dashboard" class="button hollow">Dashboard</button></a>
+      <a href="dashboard" height="30" width="30" alt=""><i class="fa fa-info-circle"></i></a>
+    </div>
+  </div>
+  <div class="app-dashboard-body off-canvas-wrapper">
+    <div id="app-dashboard-sidebar" class="app-dashboard-sidebar position-left off-canvas off-canvas-absolute reveal-for-medium" data-off-canvas>
+      <div class="app-dashboard-sidebar-title-area">
+        <div class="app-dashboard-close-sidebar">
+          <h3 class="app-dashboard-sidebar-block-title">CHIBB</h3>
+          <!-- Close button -->
+          <button id="close-sidebar" data-app-dashboard-toggle-shrink class="app-dashboard-sidebar-close-button show-for-medium" aria-label="Close menu" type="button">
+            <span aria-hidden="true"><a href="#"><i class="large fa fa-angle-double-left"></i></a></span>
+          </button>
+        </div>
+        <div class="app-dashboard-open-sidebar">
+          <button id="open-sidebar" data-app-dashboard-toggle-shrink class="app-dashboard-open-sidebar-button show-for-medium" aria-label="open menu" type="button">
+            <span aria-hidden="true"><a href="#"><i class="large fa fa-angle-double-right"></i></a></span>
+          </button>
+        </div>
+      </div>
+      <div class="app-dashboard-sidebar-inner">
+        <ul class="menu vertical">
+          <li>
+            <a href="/floorplan/CHIBB/0">
+              <i class="large fa fa-hourglass"></i><span class="app-dashboard-sidebar-text">Begane grond</span>
+            </a>
+          </li>
+          <li>
+            <a href="/floorplan/CHIBB/1">
+              <i class="large fa fa-industry"></i><span class="app-dashboard-sidebar-text">1ste verdieping</span>
+            </a>
+          </li>
+          <li>
+            <a href="/floorplan/CHIBB/2">
+              <i class="large fa fa-industry"></i><span class="app-dashboard-sidebar-text">2de verdieping</span>
+            </a>
+          </li>
+          <!-- <li>
+            <h3 class="app-dashboard-sidebar-block-title sidebar-title">CHIBB2</h3>
+          </li>
+          <li>
+            <a>
+              <i class="large fa fa-hourglass"></i><span class="app-dashboard-sidebar-text">basement</span>
+            </a>
+          </li>
+          <li>
+            <a>
+              <i class="large fa fa-industry"></i><span class="app-dashboard-sidebar-text">1st floor</span>
+            </a>
+          </li> -->
+        </ul>
+      </div>
+    </div>
+
+    <div class="app-dashboard-body-content off-canvas-content" data-off-canvas-content>
+      <h2 class="text-center">Eerste verdieping</h2>
+      <canvas id="floorPlan" width="1637" height="810"></canvas>
+      <script>
+        var canvas = document.getElementById('floorPlan');
+        var context = canvas.getContext('2d');
+        var imageObj = new Image();
+
+        imageObj.onload = function() {
+          context.drawImage(imageObj, 69, 50);
+        };
+        imageObj.src = 'assets/img/CHIBB_1.png';
+      </script>
+
+    </div>
+  </div>
+</div>
+
+
+
+  <script src="assets/js/app.js"></script>
+</body>
+
+</html>
