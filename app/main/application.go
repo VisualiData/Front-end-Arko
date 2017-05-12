@@ -8,12 +8,12 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("dist/index.html")
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/home.html")
 	t.Execute(w, r)
 }
 
 func dashboard(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("dist/dashboard.html")
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/dashboard.html")
 	t.Execute(w, r)
 }
 
@@ -34,9 +34,26 @@ func house(w http.ResponseWriter, r *http.Request){
 	}
 	result := get_data(url)
 	//result := "test"
-	//fmt.Println(result.Data)
+	fmt.Println(result.Data)
 	t, _ := template.ParseFiles("dist/index.html")
-	t.Execute(w, result)
+	t.Execute(w, r)
+}
+
+func add_sensor(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html")
+	t.Execute(w, r)
+}
+
+func login(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/login.html")
+	t.Execute(w, r)
+}
+
+func check_login(w http.ResponseWriter, r *http.Request){
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/login.html")
+	fmt.Println(r.FormValue("username"))
+	fmt.Println(r.FormValue("password"))
+	t.Execute(w, r)
 }
 func main(){
 	r := mux.NewRouter()
@@ -45,7 +62,11 @@ func main(){
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
 
 	r.HandleFunc("/", home)
+	r.HandleFunc("/login", login).Methods("GET")
+	r.HandleFunc("/login", check_login).Methods("POST")
+
 	r.HandleFunc("/dashboard", dashboard)
+	r.HandleFunc("/dashboard/add", add_sensor)
 	r.HandleFunc("/test", test)
 	r.HandleFunc("/floorplan/{house}", house).Methods("GET")
 	r.HandleFunc("/floorplan/{house}/{floor}", house).Methods("GET")

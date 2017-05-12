@@ -1,0 +1,17 @@
+{{ define "content" }}
+<br>
+<div class="row columns medium-4 align-center container-padded">
+  <form method="post" action="login">
+    <div class="sign-in-form">
+      <h4 class="text-center">Sign In</h4>
+      <label for="sign-in-form-username">Username</label>
+      <input type="text" name="username" class="sign-in-form-username" id="sign-in-form-username" required>
+      <label for="sign-in-form-password">Password</label>
+      <input type="password" name="password" class="sign-in-form-password" id="sign-in-form-password" required>
+      <button type="submit" class="sign-in-form-button">Sign In</button>
+    </div>
+  </form>
+</div>
+
+
+{{ end }}

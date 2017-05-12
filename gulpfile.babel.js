@@ -26,7 +26,7 @@ function loadConfig() {
 
 // Build the "dist" folder by running all of the below tasks
 gulp.task('build',
- gulp.series(clean, gulp.parallel(pages, sass, javascript, images, copy), styleGuide));
+ gulp.series(clean, gulp.parallel(pages, sass, javascript, images, copy)));
 
 // Build the site, run the server, and watch for file changes
 gulp.task('default',
@@ -48,13 +48,13 @@ function copy() {
 // Copy page templates into finished HTML files
 function pages() {
   return gulp.src('src/pages/**/*.{html,hbs,handlebars}')
-    .pipe(panini({
-      root: 'src/pages/',
-      layouts: 'src/layouts/',
-      partials: 'src/partials/',
-      data: 'src/data/',
-      helpers: 'src/helpers/'
-    }))
+    // .pipe(panini({
+    //   root: 'src/pages/',
+    //   layouts: 'src/layouts/',
+    //   partials: 'src/partials/',
+    //   data: 'src/data/',
+    //   helpers: 'src/helpers/'
+    // }))
     .pipe(gulp.dest(PATHS.dist));
 }
 
@@ -65,12 +65,12 @@ function resetPages(done) {
 }
 
 // Generate a style guide from the Markdown content and HTML template in styleguide/
-function styleGuide(done) {
-  sherpa('src/styleguide/index.md', {
-    output: PATHS.dist + '/styleguide.html',
-    template: 'src/styleguide/template.html'
-  }, done);
-}
+// function styleGuide(done) {
+//   sherpa('src/styleguide/index.md', {
+//     output: PATHS.dist + '/styleguide.html',
+//     template: 'src/styleguide/template.html'
+//   }, done);
+// }
 
 // Compile Sass into CSS
 // In production, the CSS is compressed
@@ -119,8 +119,8 @@ function images() {
 // Start a server with BrowserSync to preview the site in
 function server(done) {
   browser.init({
-    // proxy: "visualidata.local"
-    server: PATHS.dist, port: PORT
+    proxy: "visualidata.local"
+    // server: PATHS.dist, port: PORT
   });
   done();
 }
@@ -139,5 +139,5 @@ function watch() {
   gulp.watch('src/assets/scss/**/*.scss').on('all', sass);
   gulp.watch('src/assets/js/**/*.js').on('all', gulp.series(javascript, browser.reload));
   gulp.watch('src/assets/img/**/*').on('all', gulp.series(images, browser.reload));
-  gulp.watch('src/styleguide/**').on('all', gulp.series(styleGuide, browser.reload));
+  // gulp.watch('src/styleguide/**').on('all', gulp.series(styleGuide, browser.reload));
 }
