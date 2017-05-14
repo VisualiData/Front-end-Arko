@@ -45,6 +45,7 @@
 
 $topbar-responsive-bg: #2c3840;
 $topbar-responsive-animation-type: fade-in; // or use slide-down or none
+$warning-color: orange;
 
 .topbar-responsive {
   background: $topbar-responsive-bg;
@@ -110,7 +111,7 @@ $topbar-responsive-animation-type: fade-in; // or use slide-down or none
         transform: translateY(-50%);
 
         .menu-icon {
-          margin-bottom: 4px;
+          // margin-bottom: 4px;
         }
       }
     }
@@ -178,14 +179,18 @@ $topbar-responsive-animation-type: fade-in; // or use slide-down or none
   }
 }
 
+.form-input-field,
 .sign-in-form-username,
 .sign-in-form-password {
   border-radius: 30px;
   border: none;
-  opacity: .1;
+  opacity: .3;
   transition: all ease .4s;
+  color: white;
 }
-
+input::placeholder{
+  color:black;
+}
 .sign-in-form-button {
   border-radius: 30px;
   border: 1px solid #fff;
@@ -200,5 +205,48 @@ $topbar-responsive-animation-type: fade-in; // or use slide-down or none
   &:hover {
     background-color: #44c8ed;
     border-color: #44c8ed;
+  }
+}
+.stats-list {
+  list-style-type: none;
+  clear: left;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  margin-bottom: 30px;
+
+  .stats-list-positive {
+    color: $success-color;
+  }
+
+  .stats-list-negative {
+    color: $alert-color;
+  }
+
+  .stats-list-warning {
+    color: $warning-color;
+  }
+
+  & > li {
+    display: inline-block;
+    margin-right: 10px;
+    padding-right: 10px;
+    border-right: 1px solid $medium-gray;
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: bold;
+
+    &:last-child {
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .stats-list-label {
+      display: block;
+      margin-top: 2px;
+      font-size: 0.9em;
+      font-weight: normal;
+    }
   }
 }

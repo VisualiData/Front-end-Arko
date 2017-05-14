@@ -1,0 +1,18 @@
+{{ define "content" }}<br>
+<div class="row columns medium-4 align-center container-padded">
+  <form method="post" action="sensor/add">
+    <div class="sign-in-form">
+      <h4 class="text-center">Add sensor</h4>
+      <label for="sign-in-form-username">Sensor ID / Sensor name</label>
+      <input type="text" name="sensor_id" class="form-input-field" placeholder="CHIBB-Node-1" value="test" required>
+      <label for="sign-in-form-password">Type(s)</label>
+      <input type="text" name="sensorType" class="form-input-field" placeholder="Temperature" value="test" required>
+      <label for="sign-in-form-password">Node name</label>
+      <input type="text" name="nodeName" class="form-input-field" value="test">
+      <label for="sign-in-form-password">Node type</label>
+      <input type="text" name="nodeType" class="form-input-field" value="test">
+      <button type="submit" class="sign-in-form-button">Add</button>
+    </div>
+  </form>
+</div>
+{{ end }}
