@@ -12,33 +12,60 @@
       <label for="sign-in-form-password">Node type</label>
       <input type="text" name="nodeType" class="form-input-field" value="test">
       <!-- <label for="sign-in-form-password">X</label> -->
-      <input type="hidden" name="x" id="field_x" class="form-input-field" disabled="disabled" required>
+      <input type="text" name="x" id="field_x" class="form-input-field" disabled="disabled" required>
       <!-- <label for="sign-in-form-password">Y</label> -->
-      <input type="hidden" name="y" id="field_y" class="form-input-field" disabled="disabled" required>
+      <input type="text" name="y" id="field_y" class="form-input-field" disabled="disabled" required>
       <button type="submit" class="sign-in-form-button">Add</button>
     </div>
   </form>
 </div>
-<div class="columns large-8 align-center container-padded">
-  <img src="/assets/img/CHIBB_0.png" id="floor_plan"/>
+<div class="columns large-8 align-center container-padded" id="floor_plan_container">
+
+  <!-- <img src="/assets/img/CHIBB_0.png" id="floor_plan" style="position:static;z-index:1;" /> -->
+  <canvas id="myCanvas" style="width: 100%;">
+Your browser does not support the HTML5 canvas tag.
+</canvas>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
-$(document).ready(function() {
-    $("img").on("click", function(event) {
-      var img = $("#floor_plan");
-        var currentClickPosX = event.pageX - this.offsetLeft;
-        var currentClickPosY = event.pageY - this.offsetTop;
-        var naturalWidth = img.prop("naturalWidth");
-        var naturalHeight = img.prop("naturalHeight");
-        var width = img.prop("width");
-        var height = img.prop("height");
-        var naturalClickPosX = (naturalWidth / width) * currentClickPosX;
-        var naturalClickPosY = (naturalHeight / height) * currentClickPosY;
-        console.log("X Coordinate: " + parseInt(naturalClickPosX) + " Y Coordinate: " + parseInt(naturalClickPosY));
-        $("#field_x").val(parseInt(naturalClickPosX));
-        $("#field_y").val(parseInt(naturalClickPosY));
+  $(document).ready(function() {
+    var naturalWidth = 0;
+    var naturalHeight = 0;
+    var imgWidth = 0;
+    var imgHeight = 0;
+
+    var canvas = document.getElementById("myCanvas");
+    var context = canvas.getContext('2d');
+    var img_buffer = document.createElement('img');
+    img_buffer.src = '/assets/img/CHIBB_0.png';
+    img_buffer.onload = function() {
+      imgWidth = img_buffer.width;
+      imgHeight = img_buffer.height;
+      naturalWidth = img_buffer.naturalWidth;
+      naturalHeight = img_buffer.naturalHeight;
+      canvas.width = imgWidth;
+      canvas.height = imgHeight;
+      context.drawImage(img_buffer, 0, 0, imgWidth, imgHeight);
+    }
+
+    $("#myCanvas").on("click", function(event) {
+      context.drawImage(img_buffer, 0, 0, imgWidth, imgHeight);
+      var currentClickPosX = event.pageX - this.offsetLeft;
+      var currentClickPosY = event.pageY - this.offsetTop;
+      var naturalClickPosX = (naturalWidth / canvas.scrollWidth) * currentClickPosX;
+      var naturalClickPosY = (naturalHeight / canvas.scrollHeight) * currentClickPosY;
+      // console.log(naturalWidth);
+      // console.log(naturalHeight);
+      // console.log(canvas.scrollWidth);
+      // console.log(canvas.scrollHeight);
+      // console.log("real: X Coordinate: " + currentClickPosX + " Y Coordinate: " + currentClickPosY);
+      // console.log("natural: X Coordinate: " + parseInt(naturalClickPosX) + " Y Coordinate: " + parseInt(naturalClickPosY));
+      $("#field_x").val(parseInt(naturalClickPosX));
+      $("#field_y").val(parseInt(naturalClickPosY));
+      context.beginPath();
+      context.arc(naturalClickPosX, naturalClickPosY, 5, 0, 2 * Math.PI);
+      context.stroke();
     });
-});
+  });
 </script>
 {{ end }}
