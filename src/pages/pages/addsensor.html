@@ -1,27 +1,42 @@
-{{ define "content" }}<br>
+{{ define "content" }}<br> {{ if .Message }}
+<div class="columns large-16 align-center">
+  <div class="{{.Status}} callout" data-closeable>
+    <p>{{.Message}}</p>
+    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+    <span aria-hidden="true">&times;</span>
+  </button>
+  </div>
+</div>
+{{end}}
 <div class="columns large-4 align-center container-padded">
   <form method="post" action="sensor/add">
     <div class="sign-in-form">
       <h4 class="text-center">Add sensor</h4>
       <label for="sign-in-form-username">Sensor ID / Sensor name</label>
-      <input type="text" name="sensor_id" class="form-input-field" placeholder="CHIBB-Node-1" value="test" required>
+      <input type="text" name="sensor_id" class="form-input-field" placeholder="CHIBB-Node-1" required>
       <label for="sign-in-form-password">Type(s)</label>
-      <input type="text" name="sensorType" class="form-input-field" placeholder="Temperature" value="test" required>
+      <input type="text" name="sensorType" class="form-input-field" placeholder="Temperature" required>
       <label for="sign-in-form-password">Node name</label>
-      <input type="text" name="nodeName" class="form-input-field" value="test">
+      <input type="text" name="nodeName" class="form-input-field">
       <label for="sign-in-form-password">Node type</label>
-      <input type="text" name="nodeType" class="form-input-field" value="test">
+      <input type="text" name="nodeType" class="form-input-field">
+      <label for="sign-in-form-password">Node type</label>
+      <select name="floor">
+        <option value="0">Begane grond</option>
+        <option value="1">Eerste verdieping</option>
+        <option value="2">Tweede verdieping</option>
+      </select>
+      <!-- type="text" name="nodeType" class="form-input-field"> -->
       <!-- <label for="sign-in-form-password">X</label> -->
-      <input type="text" name="x" id="field_x" class="form-input-field" disabled="disabled" required>
+      <input type="hidden" name="x_coordinate" id="field_x" class="form-input-field" required>
       <!-- <label for="sign-in-form-password">Y</label> -->
-      <input type="text" name="y" id="field_y" class="form-input-field" disabled="disabled" required>
+      <input type="hidden" name="y_coordinate" id="field_y" class="form-input-field" required>
       <button type="submit" class="sign-in-form-button">Add</button>
     </div>
   </form>
 </div>
 <div class="columns large-8 align-center container-padded" id="floor_plan_container">
 
-  <!-- <img src="/assets/img/CHIBB_0.png" id="floor_plan" style="position:static;z-index:1;" /> -->
   <canvas id="myCanvas" style="width: 100%;">
 Your browser does not support the HTML5 canvas tag.
 </canvas>
@@ -29,6 +44,8 @@ Your browser does not support the HTML5 canvas tag.
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
   $(document).ready(function() {
+    var img_buffer = document.createElement('img');
+    img_buffer.src = '/assets/img/CHIBB_0.png';
     var naturalWidth = 0;
     var naturalHeight = 0;
     var imgWidth = 0;
@@ -36,8 +53,6 @@ Your browser does not support the HTML5 canvas tag.
 
     var canvas = document.getElementById("myCanvas");
     var context = canvas.getContext('2d');
-    var img_buffer = document.createElement('img');
-    img_buffer.src = '/assets/img/CHIBB_0.png';
     img_buffer.onload = function() {
       imgWidth = img_buffer.width;
       imgHeight = img_buffer.height;
@@ -47,6 +62,11 @@ Your browser does not support the HTML5 canvas tag.
       canvas.height = imgHeight;
       context.drawImage(img_buffer, 0, 0, imgWidth, imgHeight);
     }
+    $('select').on('change', function() {
+      // alert(this.value);
+      img_buffer.src = '/assets/img/CHIBB_' + this.value + ".png";
+      context.drawImage(img_buffer, 0, 0, imgWidth, imgHeight);
+    })
 
     $("#myCanvas").on("click", function(event) {
       context.drawImage(img_buffer, 0, 0, imgWidth, imgHeight);

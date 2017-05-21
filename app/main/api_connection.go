@@ -5,10 +5,19 @@ import (
 	"log"
 	"io/ioutil"
 	"bytes"
+	"encoding/json"
+	"fmt"
 )
 
 type Result struct {
 	Data string
+}
+
+type Response struct {
+	Code int `json:"statuscode"`
+	Data[] Sensor `json:"data"`
+	Message string `json:"message"`
+	Status string `json:"status"`
 }
 
 type Sensor struct {
@@ -20,26 +29,34 @@ type Sensor struct {
 }
 
 type Position struct {
-	X int64 `json:"x"`
-	Y int64 `json:"y"`
+	X string `json:"x"`
+	Y string `json:"y"`
 	Floor string `json:"floor"`
+	House string `json:"house"`
 }
 
-func get_data(url string) *Result{
+func get_data(url string) *Response{
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Authorization", "dev_test")
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
-		return &Result{Data: ""}
+		//return &Result{Data: ""}
 	}
 	defer resp.Body.Close()
 	resp_body, err := ioutil.ReadAll(resp.Body)
-	return &Result{Data: string(resp_body)}
+	var response = new(Response)
+	err = json.Unmarshal(resp_body, response)
+	if(err != nil){
+		fmt.Println("whoops:", err)
+	}
+	//fmt.Print(response)
+	//return &Result{Data: string(resp_body)}
+	return response
 }
 
-func post_data(data []byte, url string)  {
+func post_data(data []byte, url string) *Response {
 	print(bytes.NewBuffer(data))
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(data))
@@ -51,6 +68,11 @@ func post_data(data []byte, url string)  {
 		//return &Result{Data: ""}
 	}
 	defer resp.Body.Close()
-	//resp_body, err := ioutil.ReadAll(resp.Body)
-	//return &Result{Data: string(resp_body)}
+	resp_body, err := ioutil.ReadAll(resp.Body)
+	var response = new(Response)
+	err = json.Unmarshal(resp_body, response)
+	if(err != nil){
+		fmt.Println("whoops:", err)
+	}
+	return response
 }

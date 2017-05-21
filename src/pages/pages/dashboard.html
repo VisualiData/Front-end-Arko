@@ -10,4 +10,73 @@
     2 <span class="stats-list-label">Offline</span>
   </li>
 </ul>
-<a class="button" href="sensor/add">Add sensor</button> {{ end }}
+
+<!-- <p>{{marshal .Data}}</p> -->
+<a class="button" href="sensor/add">Add sensor</a>
+<div class="row" id="floor_plan_container">
+</div>
+
+<!-- <div class="columns large-6 align-center container-padded" id="floor_plan_container"> -->
+<!-- </div> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+  var plans = ["CHIBB_0", "CHIBB_1", "CHIBB_2"];
+  var data = {{ marshal .Data }};
+  plans.forEach(function(value) {
+    var $div = $("<div>", {
+      id: value,
+      "class": "columns large-12"
+    });
+    $("#floor_plan_container").append($div);
+    var img_buffer = document.createElement('img');
+    img_buffer.src = '/assets/img/' + value + '.png';
+    $('<canvas></canvas>', {
+      id: "canvas_" + value,
+      'style': 'width: 100%'
+    }).appendTo("#" + value);
+    var canvas = document.getElementById("canvas_" + value);
+    var context = canvas.getContext('2d');
+    img_buffer.onload = function() {
+      imgWidth = img_buffer.width;
+      imgHeight = img_buffer.height;
+      naturalWidth = img_buffer.naturalWidth;
+      naturalHeight = img_buffer.naturalHeight;
+      canvas.width = imgWidth;
+      canvas.height = imgHeight;
+      context.drawImage(img_buffer, 0, 0, imgWidth, imgHeight);
+      var vars = value.split("_");
+      var wanted = data.filter( function(item){return (item.position.floor==vars[1]  &&  item.position.house == vars[0]);} );
+      // console.log(wanted);
+      wanted.forEach(function(sensor){
+        console.log(sensor.position.x);
+        context.beginPath();
+        context.arc(sensor.position.x, sensor.position.y, 10, 0, 2 * Math.PI);
+        context.fillStyle = 'blue';
+      context.fill();
+        context.stroke();
+      });
+    }
+  });
+  // data.forEach(function(sensor){
+  //   // console.log(sensor.position.house + sensor.position.floor);
+  //   // console.log(sensor.position.house);
+  //   var canvas = document.getElementById("canvas_" + sensor.position.house + "_" + sensor.position.floor);
+  //   var context = canvas.getContext('2d');
+  //   var centerX = canvas.width / 2;
+  //     var centerY = canvas.height / 2;
+  //     var radius = 70;
+  //
+  //     context.beginPath();
+  //     context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+  //     context.fillStyle = 'green';
+  //     context.fill();
+  //     context.lineWidth = 5;
+  //     context.strokeStyle = '#003300';
+  //     context.stroke();
+  //   // context.beginPath();
+  //   // context.arc(100, 100, 5, 0, 2 * Math.PI);
+  //   // context.fillStyle = 'green';
+  //   // context.stroke();
+  // });
+</script>
+{{ end }}

@@ -14,8 +14,22 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func dashboard(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/dashboard.html")
-	t.Execute(w, r)
+	fmap := template.FuncMap{
+		"marshal": func(v interface {}) template.JS {
+			a, _ := json.Marshal(v)
+			return template.JS(a)
+	}}
+	url := "http://localhost:4567/house/CHIBB"
+	result := get_data(url)
+
+	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/dashboard.html")
+	if err != nil {
+		fmt.Fprint(w, "Error:", err)
+		fmt.Println("Error:", err)
+		return
+	}
+
+	t.Execute(w, result)
 }
 
 func house(w http.ResponseWriter, r *http.Request){
@@ -35,25 +49,22 @@ func house(w http.ResponseWriter, r *http.Request){
 }
 
 func add_sensor_view(w http.ResponseWriter, r *http.Request) {
+	//response := &Response{200, nil, "Toegevoegd", "success"}
+	response := &Response{0, nil, "", ""}
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/addsensor.html")
-	t.Execute(w, r)
+	t.Execute(w, response)
 }
 
 func add_sensor(w http.ResponseWriter, r *http.Request) {
-	location := Position{24, 25, "1"}
+	location := Position{r.FormValue("x_coordinate"), r.FormValue("y_coordinate"), r.FormValue("floor"), "CHIBB"}
 	s := Sensor{r.FormValue("sensor_id"), r.FormValue("sensorType"), r.FormValue("nodeName"), r.FormValue("nodeType"), location}
-	//s := Sensor{r.FormValue("sensor_id"), r.FormValue("sensorType"), r.FormValue("nodeName"), r.FormValue("nodeType")}
 	b, err := json.Marshal(s)
 	if err != nil {
 		print(err)
 	}
-	//fmt.Printf("%+v\n", s)
-	println("json start")
-	fmt.Printf(string(b))
-	println("json end")
-	post_data(b, "http://localhost:4567/sensor")
+	response := post_data(b, "http://localhost:4567/sensor")
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/addsensor.html")
-	t.Execute(w, r)
+	t.Execute(w, response)
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
