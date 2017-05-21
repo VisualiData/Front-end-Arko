@@ -9,8 +9,10 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
+	url := BaseUrl + "/house/CHIBB"
+	result := get_data(url)
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/home.html")
-	t.Execute(w, r)
+	t.Execute(w, result)
 }
 
 func dashboard(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +21,7 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 			a, _ := json.Marshal(v)
 			return template.JS(a)
 	}}
-	url := "http://localhost:4567/house/CHIBB"
+	url := "http://192.168.0.21:4567/house/CHIBB"
 	result := get_data(url)
 
 	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/dashboard.html")
@@ -34,7 +36,7 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 
 func house(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
-	url := "http://localhost:4567/house/" + vars["house"]
+	url := "http://192.168.0.21:4567/house/" + vars["house"]
 	if vars["floor"] != "" {
 		//fmt.Println(vars["floor"])
 		url = url + "/" + vars["floor"]
@@ -62,9 +64,17 @@ func add_sensor(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		print(err)
 	}
-	response := post_data(b, "http://localhost:4567/sensor")
+	response := post_data(b, "http://192.168.0.21:4567/sensor")
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/addsensor.html")
 	t.Execute(w, response)
+}
+
+func edit_sensor(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	url := BaseUrl + "/sensor/" + vars["sensor_id"]
+	result := get_data_single(url)
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/addsensor.html")
+	t.Execute(w, result)
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +101,7 @@ func main(){
 	r.HandleFunc("/dashboard", dashboard)
 	r.HandleFunc("/sensor/add", add_sensor_view).Methods("GET")
 	r.HandleFunc("/sensor/add", add_sensor).Methods("POST")
+	r.HandleFunc("/sensor/edit/{sensor_id}", edit_sensor).Methods("GET")
 	//r.HandleFunc("/floorplan/{house}", house).Methods("GET")
 	//r.HandleFunc("/floorplan/{house}/{floor}", house).Methods("GET")
 	http.Handle("/", r)

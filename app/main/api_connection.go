@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 )
-
+var BaseUrl = "http://192.168.0.21:4567";
 type Result struct {
 	Data string
 }
@@ -16,6 +16,13 @@ type Result struct {
 type Response struct {
 	Code int `json:"statuscode"`
 	Data[] Sensor `json:"data"`
+	Message string `json:"message"`
+	Status string `json:"status"`
+}
+
+type ResponseSingle struct {
+	Code int `json:"statuscode"`
+	Data Sensor `json:"data"`
 	Message string `json:"message"`
 	Status string `json:"status"`
 }
@@ -38,7 +45,7 @@ type Position struct {
 func get_data(url string) *Response{
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "dev_test")
+	req.Header.Add("Authorization", "dev")
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
@@ -56,11 +63,32 @@ func get_data(url string) *Response{
 	return response
 }
 
+func get_data_single(url string) *ResponseSingle{
+	client :=  &http.Client{}
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", "dev")
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Print(err)
+		//return &Result{Data: ""}
+	}
+	defer resp.Body.Close()
+	resp_body, err := ioutil.ReadAll(resp.Body)
+	var responseSingle = new(ResponseSingle)
+	err = json.Unmarshal(resp_body, responseSingle)
+	if(err != nil){
+		fmt.Println("whoops:", err)
+	}
+	//fmt.Print(response)
+	//return &Result{Data: string(resp_body)}
+	return responseSingle
+}
+
 func post_data(data []byte, url string) *Response {
 	print(bytes.NewBuffer(data))
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(data))
-	req.Header.Add("Authorization", "dev_test")
+	req.Header.Add("Authorization", "dev")
 	req.Header.Add("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {

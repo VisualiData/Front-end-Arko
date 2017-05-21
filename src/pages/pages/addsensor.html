@@ -13,13 +13,13 @@
     <div class="sign-in-form">
       <h4 class="text-center">Add sensor</h4>
       <label for="sign-in-form-username">Sensor ID / Sensor name</label>
-      <input type="text" name="sensor_id" class="form-input-field" placeholder="CHIBB-Node-1" required>
+      <input type="text" name="sensor_id" class="form-input-field" placeholder="CHIBB-Node-1" value="{{ .Data.ID }}" required>
       <label for="sign-in-form-password">Type(s)</label>
-      <input type="text" name="sensorType" class="form-input-field" placeholder="Temperature" required>
+      <input type="text" name="sensorType" class="form-input-field" placeholder="Temperature" value="{{ .Data.Type }}" required>
       <label for="sign-in-form-password">Node name</label>
-      <input type="text" name="nodeName" class="form-input-field">
+      <input type="text" name="nodeName" class="form-input-field" value="{{ .Data.NodeName }}">
       <label for="sign-in-form-password">Node type</label>
-      <input type="text" name="nodeType" class="form-input-field">
+      <input type="text" name="nodeType" class="form-input-field" value="{{ .Data.NodeType }}">
       <label for="sign-in-form-password">Node type</label>
       <select name="floor">
         <option value="0">Begane grond</option>
