@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 )
-var BaseUrl = "http://192.168.0.21:4567";
+var BaseUrl = "http://localhost:4567";
 type Result struct {
 	Data string
 }

@@ -13,23 +13,20 @@
     <div class="sign-in-form">
       <h4 class="text-center">Add sensor</h4>
       <label for="sign-in-form-username">Sensor ID / Sensor name</label>
-      <input type="text" name="sensor_id" class="form-input-field" placeholder="CHIBB-Node-1" value="{{ .Data.ID }}" required>
+      <input type="text" name="sensor_id" placeholder="CHIBB-Node-1" required>
       <label for="sign-in-form-password">Type(s)</label>
-      <input type="text" name="sensorType" class="form-input-field" placeholder="Temperature" value="{{ .Data.Type }}" required>
+      <input type="text" name="sensorType" placeholder="Temperature" required>
       <label for="sign-in-form-password">Node name</label>
-      <input type="text" name="nodeName" class="form-input-field" value="{{ .Data.NodeName }}">
+      <input type="text" name="nodeName">
       <label for="sign-in-form-password">Node type</label>
-      <input type="text" name="nodeType" class="form-input-field" value="{{ .Data.NodeType }}">
+      <input type="text" name="nodeType">
       <label for="sign-in-form-password">Node type</label>
       <select name="floor">
         <option value="0">Begane grond</option>
         <option value="1">Eerste verdieping</option>
         <option value="2">Tweede verdieping</option>
       </select>
-      <!-- type="text" name="nodeType" class="form-input-field"> -->
-      <!-- <label for="sign-in-form-password">X</label> -->
       <input type="hidden" name="x_coordinate" id="field_x" class="form-input-field" required>
-      <!-- <label for="sign-in-form-password">Y</label> -->
       <input type="hidden" name="y_coordinate" id="field_y" class="form-input-field" required>
       <button type="submit" class="sign-in-form-button">Add</button>
     </div>
@@ -63,7 +60,6 @@ Your browser does not support the HTML5 canvas tag.
       context.drawImage(img_buffer, 0, 0, imgWidth, imgHeight);
     }
     $('select').on('change', function() {
-      // alert(this.value);
       img_buffer.src = '/assets/img/CHIBB_' + this.value + ".png";
       context.drawImage(img_buffer, 0, 0, imgWidth, imgHeight);
     })
@@ -74,12 +70,6 @@ Your browser does not support the HTML5 canvas tag.
       var currentClickPosY = event.pageY - this.offsetTop;
       var naturalClickPosX = (naturalWidth / canvas.scrollWidth) * currentClickPosX;
       var naturalClickPosY = (naturalHeight / canvas.scrollHeight) * currentClickPosY;
-      // console.log(naturalWidth);
-      // console.log(naturalHeight);
-      // console.log(canvas.scrollWidth);
-      // console.log(canvas.scrollHeight);
-      // console.log("real: X Coordinate: " + currentClickPosX + " Y Coordinate: " + currentClickPosY);
-      // console.log("natural: X Coordinate: " + parseInt(naturalClickPosX) + " Y Coordinate: " + parseInt(naturalClickPosY));
       $("#field_x").val(parseInt(naturalClickPosX));
       $("#field_y").val(parseInt(naturalClickPosY));
       context.beginPath();

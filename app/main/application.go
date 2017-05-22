@@ -21,7 +21,7 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 			a, _ := json.Marshal(v)
 			return template.JS(a)
 	}}
-	url := "http://192.168.0.21:4567/house/CHIBB"
+	url := BaseUrl + "/house/CHIBB"
 	result := get_data(url)
 
 	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/dashboard.html")
@@ -36,7 +36,7 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 
 func house(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
-	url := "http://192.168.0.21:4567/house/" + vars["house"]
+	url := BaseUrl + "/house/" + vars["house"]
 	if vars["floor"] != "" {
 		//fmt.Println(vars["floor"])
 		url = url + "/" + vars["floor"]
@@ -64,7 +64,7 @@ func add_sensor(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		print(err)
 	}
-	response := post_data(b, "http://192.168.0.21:4567/sensor")
+	response := post_data(b, BaseUrl + "/sensor")
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/addsensor.html")
 	t.Execute(w, response)
 }
