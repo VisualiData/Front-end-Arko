@@ -9,6 +9,8 @@ import (
 	"fmt"
 )
 var BaseUrl = "http://localhost:4567";
+var API_Key = "dev_test";
+
 type Result struct {
 	Data string
 }
@@ -45,7 +47,7 @@ type Position struct {
 func get_data(url string) *Response{
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "dev")
+	req.Header.Add("Authorization", API_Key)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
@@ -66,7 +68,7 @@ func get_data(url string) *Response{
 func get_data_single(url string) *ResponseSingle{
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", "dev")
+	req.Header.Add("Authorization", API_Key)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
@@ -88,7 +90,7 @@ func post_data(data []byte, url string) *Response {
 	print(bytes.NewBuffer(data))
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(data))
-	req.Header.Add("Authorization", "dev")
+	req.Header.Add("Authorization", API_Key)
 	req.Header.Add("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {
