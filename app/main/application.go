@@ -69,11 +69,11 @@ func add_sensor(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, response)
 }
 
-func edit_sensor(w http.ResponseWriter, r *http.Request) {
+func edit_sensor_view(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	url := BaseUrl + "/sensor/" + vars["sensor_id"]
 	result := get_data_single(url)
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/addsensor.html")
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/editsensor.html")
 	t.Execute(w, result)
 }
 
@@ -101,7 +101,7 @@ func main(){
 	r.HandleFunc("/dashboard", dashboard)
 	r.HandleFunc("/sensor/add", add_sensor_view).Methods("GET")
 	r.HandleFunc("/sensor/add", add_sensor).Methods("POST")
-	r.HandleFunc("/sensor/edit/{sensor_id}", edit_sensor).Methods("GET")
+	r.HandleFunc("/sensor/edit/{sensor_id}", edit_sensor_view).Methods("GET")
 	//r.HandleFunc("/floorplan/{house}", house).Methods("GET")
 	//r.HandleFunc("/floorplan/{house}/{floor}", house).Methods("GET")
 	http.Handle("/", r)
