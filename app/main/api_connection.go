@@ -9,7 +9,7 @@ import (
 	"fmt"
 )
 var BaseUrl = "http://localhost:4567";
-var API_Key = "dev_test";
+var API_Key = "dev";
 
 type Result struct {
 	Data string
@@ -35,6 +35,7 @@ type Sensor struct {
 	NodeName string `json:"nodeName"`
 	NodeType string `json:"nodeType"`
 	Location Position `json:"position"`
+	Status string `json:"status"`
 }
 
 type Position struct {

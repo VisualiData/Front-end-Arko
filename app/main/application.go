@@ -59,7 +59,7 @@ func add_sensor_view(w http.ResponseWriter, r *http.Request) {
 
 func add_sensor(w http.ResponseWriter, r *http.Request) {
 	location := Position{r.FormValue("x_coordinate"), r.FormValue("y_coordinate"), r.FormValue("floor"), "CHIBB"}
-	s := Sensor{r.FormValue("sensor_id"), r.FormValue("sensorType"), r.FormValue("nodeName"), r.FormValue("nodeType"), location}
+	s := Sensor{r.FormValue("sensor_id"), r.FormValue("sensorType"), r.FormValue("nodeName"), r.FormValue("nodeType"), location, "active"}
 	b, err := json.Marshal(s)
 	if err != nil {
 		print(err)
