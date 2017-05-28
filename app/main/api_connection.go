@@ -137,23 +137,3 @@ func post_data(data []byte, url string) *Response {
 	}
 	return response
 }
-
-func put_data(data []byte, url string) *Response {
-	client :=  &http.Client{}
-	req, _ := http.NewRequest("PUT", url, bytes.NewBuffer(data))
-	req.Header.Add("Authorization", API_Key)
-	req.Header.Add("Content-Type", "application/json")
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Print(err)
-		//return &Result{Data: ""}
-	}
-	defer resp.Body.Close()
-	resp_body, err := ioutil.ReadAll(resp.Body)
-	var response = new(Response)
-	err = json.Unmarshal(resp_body, response)
-	if(err != nil){
-		fmt.Println("whoops:", err)
-	}
-	return response
-}

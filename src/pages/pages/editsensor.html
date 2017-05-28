@@ -26,8 +26,8 @@
         <option value="1">Eerste verdieping</option>
         <option value="2">Tweede verdieping</option>
       </select>
-      <input type="hidden" name="x_coordinate" id="field_x" class="form-input-field" required>
-      <input type="hidden" name="y_coordinate" id="field_y" class="form-input-field" required>
+      <input type="hidden" name="x_coordinate" id="field_x" class="form-input-field" value="{{ .Data.Location.X }}" required>
+      <input type="hidden" name="y_coordinate" id="field_y" class="form-input-field" value="{{ .Data.Location.Y }}" required>
       <button type="submit" class="sign-in-form-button">Update</button>
     </div>
   </form>

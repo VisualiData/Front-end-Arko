@@ -95,7 +95,7 @@ func edit_sensor(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		print(err)
 	}
-	response := put_data(b, BaseUrl + "/sensor")
+	response := post_data(b, BaseUrl + "/sensor/update")
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/editsensor.html")
 	t.Execute(w, response)
 }
