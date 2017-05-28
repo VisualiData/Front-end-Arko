@@ -8,13 +8,18 @@ import (
 	"encoding/json"
 	"fmt"
 )
-var BaseUrl = "http://localhost:4567";
+var BaseUrl = "http://192.168.0.21:4567";
 var API_Key = "dev";
 
 type Result struct {
 	Data string
 }
-
+type DataResponse struct {
+	Code int `json:"statuscode"`
+	Data[] SensorData `json:"data"`
+	Message string `json:"message"`
+	Status string `json:"status"`
+}
 type Response struct {
 	Code int `json:"statuscode"`
 	Data[] Sensor `json:"data"`
@@ -38,13 +43,38 @@ type Sensor struct {
 	Status string `json:"status"`
 }
 
+type SensorData struct {
+	Timestamp string `json:"timestamp"`
+	Type string `json:"type"`
+	Value float64 `json:"value"`
+}
+
 type Position struct {
 	X string `json:"x"`
 	Y string `json:"y"`
 	Floor string `json:"floor"`
 	House string `json:"house"`
 }
-
+func get_sensordata(url string) *DataResponse{
+	client :=  &http.Client{}
+	req, _ := http.NewRequest("GET", url, nil)
+	req.Header.Add("Authorization", API_Key)
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Print(err)
+		//return &Result{Data: ""}
+	}
+	defer resp.Body.Close()
+	resp_body, err := ioutil.ReadAll(resp.Body)
+	var response = new(DataResponse)
+	err = json.Unmarshal(resp_body, response)
+	if(err != nil){
+		fmt.Println("whoops:", err)
+	}
+	//fmt.Print(response)
+	//return &Result{Data: string(resp_body)}
+	return response
+}
 func get_data(url string) *Response{
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
@@ -91,6 +121,26 @@ func post_data(data []byte, url string) *Response {
 	print(bytes.NewBuffer(data))
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(data))
+	req.Header.Add("Authorization", API_Key)
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Print(err)
+		//return &Result{Data: ""}
+	}
+	defer resp.Body.Close()
+	resp_body, err := ioutil.ReadAll(resp.Body)
+	var response = new(Response)
+	err = json.Unmarshal(resp_body, response)
+	if(err != nil){
+		fmt.Println("whoops:", err)
+	}
+	return response
+}
+
+func put_data(data []byte, url string) *Response {
+	client :=  &http.Client{}
+	req, _ := http.NewRequest("PUT", url, bytes.NewBuffer(data))
 	req.Header.Add("Authorization", API_Key)
 	req.Header.Add("Content-Type", "application/json")
 	resp, err := client.Do(req)

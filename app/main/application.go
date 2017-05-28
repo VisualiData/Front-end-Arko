@@ -9,9 +9,20 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
-	url := BaseUrl + "/house/CHIBB"
-	result := get_data(url)
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/home.html")
+	fmap := template.FuncMap{
+		"marshal": func(v interface {}) template.JS {
+			a, _ := json.Marshal(v)
+			return template.JS(a)
+		}}
+	url := BaseUrl + "/sensor/CHIBB-Test-02/2017-05-27T00:00:00/2017-05-29T09:00:00/Temperature"
+	result := get_sensordata(url)
+	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/home.html")
+	if err != nil {
+		fmt.Fprint(w, "Error:", err)
+		fmt.Println("Error:", err)
+		return
+	}
+
 	t.Execute(w, result)
 }
 
@@ -77,6 +88,18 @@ func edit_sensor_view(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, result)
 }
 
+func edit_sensor(w http.ResponseWriter, r *http.Request) {
+	location := Position{r.FormValue("x_coordinate"), r.FormValue("y_coordinate"), r.FormValue("floor"), "CHIBB"}
+	s := Sensor{r.FormValue("sensor_id"), r.FormValue("sensorType"), r.FormValue("nodeName"), r.FormValue("nodeType"), location, "active"}
+	b, err := json.Marshal(s)
+	if err != nil {
+		print(err)
+	}
+	response := put_data(b, BaseUrl + "/sensor")
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/editsensor.html")
+	t.Execute(w, response)
+}
+
 func login(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/login.html")
 	t.Execute(w, r)
@@ -102,6 +125,7 @@ func main(){
 	r.HandleFunc("/sensor/add", add_sensor_view).Methods("GET")
 	r.HandleFunc("/sensor/add", add_sensor).Methods("POST")
 	r.HandleFunc("/sensor/edit/{sensor_id}", edit_sensor_view).Methods("GET")
+	r.HandleFunc("/sensor/edit", edit_sensor).Methods("POST")
 	//r.HandleFunc("/floorplan/{house}", house).Methods("GET")
 	//r.HandleFunc("/floorplan/{house}/{floor}", house).Methods("GET")
 	http.Handle("/", r)
