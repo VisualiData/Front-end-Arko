@@ -8,12 +8,10 @@ import (
 	"encoding/json"
 	"fmt"
 )
-var BaseUrl = "http://192.168.0.21:4567";
+
+var BaseUrl = "http://localhost:4567";
 var API_Key = "dev";
 
-type Result struct {
-	Data string
-}
 type DataResponse struct {
 	Code int `json:"statuscode"`
 	Data[] SensorData `json:"data"`
@@ -42,6 +40,12 @@ type Sensor struct {
 	Location Position `json:"position"`
 	Status string `json:"status"`
 }
+type Position struct {
+	X string `json:"x"`
+	Y string `json:"y"`
+	Floor string `json:"floor"`
+	House string `json:"house"`
+}
 
 type SensorData struct {
 	Timestamp string `json:"timestamp"`
@@ -49,20 +53,13 @@ type SensorData struct {
 	Value float64 `json:"value"`
 }
 
-type Position struct {
-	X string `json:"x"`
-	Y string `json:"y"`
-	Floor string `json:"floor"`
-	House string `json:"house"`
-}
-func get_sensordata(url string) *DataResponse{
+func getSensorData(url string) *DataResponse{
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Authorization", API_Key)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
-		//return &Result{Data: ""}
 	}
 	defer resp.Body.Close()
 	resp_body, err := ioutil.ReadAll(resp.Body)
@@ -71,18 +68,15 @@ func get_sensordata(url string) *DataResponse{
 	if(err != nil){
 		fmt.Println("whoops:", err)
 	}
-	//fmt.Print(response)
-	//return &Result{Data: string(resp_body)}
 	return response
 }
-func get_data(url string) *Response{
+func getData(url string) *Response{
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Authorization", API_Key)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
-		//return &Result{Data: ""}
 	}
 	defer resp.Body.Close()
 	resp_body, err := ioutil.ReadAll(resp.Body)
@@ -91,19 +85,16 @@ func get_data(url string) *Response{
 	if(err != nil){
 		fmt.Println("whoops:", err)
 	}
-	//fmt.Print(response)
-	//return &Result{Data: string(resp_body)}
 	return response
 }
 
-func get_data_single(url string) *ResponseSingle{
+func getDataSingle(url string) *ResponseSingle{
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Authorization", API_Key)
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
-		//return &Result{Data: ""}
 	}
 	defer resp.Body.Close()
 	resp_body, err := ioutil.ReadAll(resp.Body)
@@ -112,13 +103,10 @@ func get_data_single(url string) *ResponseSingle{
 	if(err != nil){
 		fmt.Println("whoops:", err)
 	}
-	//fmt.Print(response)
-	//return &Result{Data: string(resp_body)}
 	return responseSingle
 }
 
 func post_data(data []byte, url string) *Response {
-	print(bytes.NewBuffer(data))
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	req.Header.Add("Authorization", API_Key)
@@ -126,7 +114,6 @@ func post_data(data []byte, url string) *Response {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
-		//return &Result{Data: ""}
 	}
 	defer resp.Body.Close()
 	resp_body, err := ioutil.ReadAll(resp.Body)

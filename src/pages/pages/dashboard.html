@@ -15,6 +15,8 @@
 <div class="row" id="floor_plan_container">
 </div>
 
+<ul id="sensors">
+</ul>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
 var active = 0;
@@ -22,12 +24,21 @@ var warning = 0;
 var inactive = 0;
   var plans = ["CHIBB_0", "CHIBB_1", "CHIBB_2"];
   var data = {{ marshal .Data }};
+  // console.log(data);
+for(var i = 0; i < data.length; i++){
+    $('#sensors').append( '<li><a href="/sensor/edit/'+ data[i].sensor_id + '">' + data[i].sensor_id + '</a></li>' );
+}
   plans.forEach(function(value) {
     var $div = $("<div>", {
       id: value,
       "class": "columns large-12"
     });
     $("#floor_plan_container").append($div);
+    $('<p></p>', {
+      id: "p_" + value,
+      'style': 'text-align: center;',
+      'text': value
+    }).appendTo("#" + value);
     var img_buffer = document.createElement('img');
     img_buffer.src = '/assets/img/' + value + '.png';
     $('<canvas></canvas>', {

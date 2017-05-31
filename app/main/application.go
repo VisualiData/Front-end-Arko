@@ -9,13 +9,18 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
 	fmap := template.FuncMap{
 		"marshal": func(v interface {}) template.JS {
 			a, _ := json.Marshal(v)
 			return template.JS(a)
 		}}
-	url := BaseUrl + "/sensor/CHIBB-Test-02/2017-05-27T00:00:00/2017-05-29T09:00:00/Temperature"
-	result := get_sensordata(url)
+	// should be dynamic
+	url := BaseUrl + "/sensor/CHIBB-Test-02/2017-05-27T00:00:00/2017-05-29T13:15:00/Temperature"
+	if vars["sensor_id"] != "" {
+		url = BaseUrl + "/sensor/"+ vars["sensor_id"]+"/2017-05-27T00:00:00/2017-05-29T13:15:00/Temperature"
+	}
+	result := getSensorData(url)
 	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/home.html")
 	if err != nil {
 		fmt.Fprint(w, "Error:", err)
@@ -33,7 +38,7 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 			return template.JS(a)
 	}}
 	url := BaseUrl + "/house/CHIBB"
-	result := get_data(url)
+	result := getData(url)
 
 	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/dashboard.html")
 	if err != nil {
@@ -54,7 +59,7 @@ func house(w http.ResponseWriter, r *http.Request){
 	} else {
 		fmt.Println("No floor")
 	}
-	result := get_data(url)
+	result := getData(url)
 	//result := "test"
 	fmt.Println(result.Data)
 	t, _ := template.ParseFiles("dist/index.html")
@@ -83,7 +88,7 @@ func add_sensor(w http.ResponseWriter, r *http.Request) {
 func edit_sensor_view(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	url := BaseUrl + "/sensor/" + vars["sensor_id"]
-	result := get_data_single(url)
+	result := getDataSingle(url)
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/editsensor.html")
 	t.Execute(w, result)
 }
@@ -113,11 +118,12 @@ func check_login(w http.ResponseWriter, r *http.Request){
 }
 func main(){
 	r := mux.NewRouter()
-	// exclude matching of assets folder
+	// exclude route matching of assets folder
 	fs := http.FileServer(http.Dir("dist/assets/"))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
 
 	r.HandleFunc("/", home)
+	r.HandleFunc("/home/{sensor_id}", home)
 	r.HandleFunc("/login", login).Methods("GET")
 	r.HandleFunc("/login", check_login).Methods("POST")
 
