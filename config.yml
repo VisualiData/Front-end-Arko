@@ -66,3 +66,4 @@ PATHS:
     - "src/assets/js/building-blocks/searchbar-expand-on-click.js"
     - "src/assets/js/building-blocks/switch-toggle-all.js"
     - "src/assets/js/app.js"
+    - "src/assets/js/edit-sensor.js"

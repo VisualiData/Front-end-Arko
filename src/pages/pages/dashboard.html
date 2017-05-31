@@ -17,14 +17,13 @@
 
 <ul id="sensors">
 </ul>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
+$(document).ready(function() {
 var active = 0;
 var warning = 0;
 var inactive = 0;
   var plans = ["CHIBB_0", "CHIBB_1", "CHIBB_2"];
   var data = {{ marshal .Data }};
-  // console.log(data);
 for(var i = 0; i < data.length; i++){
     $('#sensors').append( '<li><a href="/sensor/edit/'+ data[i].sensor_id + '">' + data[i].sensor_id + '</a></li>' );
 }
@@ -58,20 +57,17 @@ for(var i = 0; i < data.length; i++){
       var vars = value.split("_");
       var wanted = data.filter( function(item){return (item.position.floor==vars[1]  &&  item.position.house == vars[0]);} );
       wanted.forEach(function(sensor){
-        context.beginPath();
-        context.arc(sensor.position.x, sensor.position.y, 10, 0, 2 * Math.PI);
+        var color = "red";
         if(sensor.status == "active"){
-            context.fillStyle = 'green';
+            color = 'green';
             active++;
         } else if (sensor.status == "intermittent failures"){
-        context.fillStyle = 'orange';
+        color = 'orange';
         warning++;
-      } else {
-        context.fillStyle = 'red';
+      }else{
         inactive++;
       }
-      context.fill();
-        context.stroke();
+      drawCircle(context, sensor.position.x, sensor.position.y, 10, color);
       });
       // console.log(active);
       $("#active").text(active);
@@ -80,6 +76,7 @@ for(var i = 0; i < data.length; i++){
       // console.log(inactive);
       $("#inactive").text(inactive);
     }
+  });
   });
 </script>
 {{ end }}
