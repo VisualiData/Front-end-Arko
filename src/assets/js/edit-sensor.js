@@ -6,6 +6,13 @@ function drawCircle(context, x, y, radius, color) {
   context.stroke();
 }
 
+var Circle = function(x, y, radius) {
+    this.left = x - radius;
+    this.top = y - radius;
+    this.right = parseInt(x) + radius;
+    this.bottom = parseInt(y) + radius;
+};
+
 function loadFloorPlan(){
   var naturalWidth = 0;
   var naturalHeight = 0;

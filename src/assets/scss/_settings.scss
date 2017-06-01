@@ -47,7 +47,7 @@
 // ---------
 
 $global-font-size: 100%;
-$global-width: rem-calc(1200);
+$global-width: rem-calc(1920);
 $global-lineheight: 1.5;
 $foundation-palette: (
   primary: #1779ba,
@@ -93,7 +93,7 @@ $breakpoint-classes: (small medium large);
 // -----------
 
 $grid-row-width: $global-width;
-$grid-column-count: 12;
+$grid-column-count: 16;
 $grid-column-gutter: (
   small: 20px,
   medium: 30px,
@@ -618,4 +618,3 @@ $topbar-submenu-background: $topbar-background;
 $topbar-title-spacing: 0.5rem 1rem 0.5rem 0;
 $topbar-input-width: 200px;
 $topbar-unstack-breakpoint: medium;
-

@@ -1,82 +1,35 @@
 {{ define "content" }}
-<ul class="stats-list">
-  <li class="stats-list-positive">
-    <span id="active"></span> <span class="stats-list-label">Active</span>
-  </li>
-  <li class="stats-list-warning">
-    <span id="warning"></span> <span class="stats-list-label">Intermittent failures</span>
-  </li>
-  <li class="stats-list-negative">
-    <span id="inactive"></span> <span class="stats-list-label">Inactive</span>
-  </li>
-</ul>
-
-<a class="button" href="sensor/add">Add sensor</a>
-<div class="row" id="floor_plan_container">
+<div class="row small-16 columns">
+  <ul class="stats-list">
+    <li class="stats-list-positive">
+      <span id="active"></span> <span class="stats-list-label">Active</span>
+    </li>
+    <li class="stats-list-warning">
+      <span id="warning"></span> <span class="stats-list-label">Intermittent failures</span>
+    </li>
+    <li class="stats-list-negative">
+      <span id="inactive"></span> <span class="stats-list-label">Inactive</span>
+    </li>
+  </ul>
 </div>
 
-<ul id="sensors">
-</ul>
+<!-- <a class="button" href="sensor/add">Add sensor</a> -->
+<div class="row">
+  <div class="large-4 columns">
+    <ul id="sensors">
+      <li><a class="button" href="sensor/add">Add sensor</a></li>
+    </ul>
+  </div>
+  <div class="large-12 columns">
+    <div class="row" id="floor_plan_container">
+    </div>
+  </div>
+</div>
+
 <script>
-$(document).ready(function() {
-var active = 0;
-var warning = 0;
-var inactive = 0;
-  var plans = ["CHIBB_0", "CHIBB_1", "CHIBB_2"];
-  var data = {{ marshal .Data }};
-for(var i = 0; i < data.length; i++){
-    $('#sensors').append( '<li><a href="/sensor/edit/'+ data[i].sensor_id + '">' + data[i].sensor_id + '</a></li>' );
-}
-  plans.forEach(function(value) {
-    var $div = $("<div>", {
-      id: value,
-      "class": "columns large-12"
-    });
-    $("#floor_plan_container").append($div);
-    $('<p></p>', {
-      id: "p_" + value,
-      'style': 'text-align: center;',
-      'text': value
-    }).appendTo("#" + value);
-    var img_buffer = document.createElement('img');
-    img_buffer.src = '/assets/img/' + value + '.png';
-    $('<canvas></canvas>', {
-      id: "canvas_" + value,
-      'style': 'width: 100%'
-    }).appendTo("#" + value);
-    var canvas = document.getElementById("canvas_" + value);
-    var context = canvas.getContext('2d');
-    img_buffer.onload = function() {
-      imgWidth = img_buffer.width;
-      imgHeight = img_buffer.height;
-      naturalWidth = img_buffer.naturalWidth;
-      naturalHeight = img_buffer.naturalHeight;
-      canvas.width = imgWidth;
-      canvas.height = imgHeight;
-      context.drawImage(img_buffer, 0, 0, imgWidth, imgHeight);
-      var vars = value.split("_");
-      var wanted = data.filter( function(item){return (item.position.floor==vars[1]  &&  item.position.house == vars[0]);} );
-      wanted.forEach(function(sensor){
-        var color = "red";
-        if(sensor.status == "active"){
-            color = 'green';
-            active++;
-        } else if (sensor.status == "intermittent failures"){
-        color = 'orange';
-        warning++;
-      }else{
-        inactive++;
-      }
-      drawCircle(context, sensor.position.x, sensor.position.y, 10, color);
-      });
-      // console.log(active);
-      $("#active").text(active);
-      // console.log(warning);
-      $("#warning").text(warning);
-      // console.log(inactive);
-      $("#inactive").text(inactive);
-    }
-  });
+  $(document).ready(function() {
+    var data = {{ marshal .Data }};
+    dashboard(data);
   });
 </script>
 {{ end }}

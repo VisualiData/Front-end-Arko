@@ -67,3 +67,4 @@ PATHS:
     - "src/assets/js/building-blocks/switch-toggle-all.js"
     - "src/assets/js/app.js"
     - "src/assets/js/edit-sensor.js"
+    - "src/assets/js/dashboard.js"
