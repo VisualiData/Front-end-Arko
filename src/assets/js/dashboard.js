@@ -5,8 +5,12 @@ function dashboard(data) {
   var inactive = 0;
   var plans = ["CHIBB_0", "CHIBB_1", "CHIBB_2"];
   var floorplans = {};
+
   for (var i = 0; i < data.length; i++) {
-    $('#sensors').append('<li><a href="/sensor/edit/' + data[i].sensor_id + '">' + data[i].sensor_id + '</a></li>');
+    if (!$('#floor' + data[i].position.floor).length) {
+      $('#sensors').append('<li><a href="#">Floor ' + data[i].position.floor + '</a><ul class="menu vertical sublevel-1" id="floor' + data[i].position.floor + '"></ul></li>');
+    }
+    $('#floor' + data[i].position.floor).append('<li><a class="subitem" href="/sensor/edit/' + data[i].sensor_id + '">' + data[i].sensor_id + '</a></li>');
   }
   plans.forEach(function(value) {
     var new_floor = {

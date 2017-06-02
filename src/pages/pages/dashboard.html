@@ -15,9 +15,9 @@
 
 <!-- <a class="button" href="sensor/add">Add sensor</a> -->
 <div class="row">
-  <div class="large-4 columns">
-    <ul id="sensors">
-      <li><a class="button" href="sensor/add">Add sensor</a></li>
+  <div class="large-4 small-16 columns">
+    <ul class="multilevel-accordion-menu vertical menu" id="sensors" data-accordion-menu>
+
     </ul>
   </div>
   <div class="large-12 columns">
@@ -30,6 +30,8 @@
   $(document).ready(function() {
     var data = {{ marshal .Data }};
     dashboard(data);
+    var elem = new Foundation.AccordionMenu($('#sensors'));
+    $('#sensors').foundation('showAll');
   });
 </script>
 {{ end }}

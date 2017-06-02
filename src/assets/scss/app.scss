@@ -1,8 +1,6 @@
 @charset 'utf-8';
-
 @import 'settings';
 @import 'foundation';
-
 @include foundation-global-styles;
 @include foundation-grid;
 @include foundation-flex-grid;
@@ -42,7 +40,6 @@
 @include foundation-top-bar;
 @include foundation-visibility-classes;
 @include foundation-float-classes;
-
 $topbar-responsive-bg: #2c3840;
 $topbar-responsive-animation-type: fade-in; // or use slide-down or none
 $warning-color: orange;
@@ -70,7 +67,6 @@ $warning-color: orange;
       &:hover {
         color: lighten($topbar-responsive-bg, 60%);
       }
-
       @media screen and (max-width: 39.9375em) {
         padding: 0.875rem 0;
       }
@@ -86,16 +82,14 @@ $warning-color: orange;
         color: lighten($topbar-responsive-bg, 60%);
         border-color: lighten($topbar-responsive-bg, 60%);
       }
-
       @media screen and (max-width: 39.9375em) {
         width: 100%;
         margin: 0.875rem 0;
       }
     }
   }
-
-   @media screen and (max-width: 39.9375em) {
-     padding: 0.75rem;
+  @media screen and (max-width: 39.9375em) {
+    padding: 0.75rem;
 
     .top-bar-title {
       position: relative;
@@ -117,49 +111,51 @@ $warning-color: orange;
     }
   }
 }
-
 @keyframes fadeIn {
   from {
-    opacity:0;
-  } to {
-    opacity:1;
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
-
 @keyframes slideDown {
   0% {
     transform: translateY(-100%);
   }
+
   100% {
     transform: translateY(0%);
   }
 }
-
 @include breakpoint(small only) {
   .topbar-responsive-links {
     animation-fill-mode: both;
     animation-duration: 0.5s;
     width: 100%;
-
     @if $topbar-responsive-animation-type == slide-down {
       animation: slideDown 1s ease-in;
-    } @else if $topbar-responsive-animation-type == fade-in {
+    }
+    @else if $topbar-responsive-animation-type == fade-in {
       animation: fadeIn 1s ease-in;
-    } @else {
+    }
+    @else {
       animation: none;
     }
   }
 }
+
 .sign-in-form {
   padding: 1rem 1.5em;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   background-color: #3d454f;
 
   h4 {
     color: white;
     margin-bottom: 1rem;
     font-weight: 600;
-    text-transform: uppercase
+    text-transform: uppercase;
   }
 
   label {
@@ -175,22 +171,24 @@ $warning-color: orange;
   }
 
   input:focus {
-    opacity: .5;
+    opacity: 0.5;
   }
 }
 
 .form-input-field,
-.sign-in-form-username,
-.sign-in-form-password {
+.sign-in-form-password,
+.sign-in-form-username {
   border-radius: 30px;
   border: none;
-  opacity: .3;
-  transition: all ease .4s;
+  opacity: 0.3;
+  transition: all ease 0.4s;
   color: white;
 }
-input::placeholder{
-  color:black;
+
+input::placeholder {
+  color: black;
 }
+
 .sign-in-form-button {
   border-radius: 30px;
   border: 1px solid #fff;
@@ -200,13 +198,14 @@ input::placeholder{
   letter-spacing: 1px;
   width: 100%;
   padding: 1rem;
-  transition: all ease .4s;
+  transition: all ease 0.4s;
 
   &:hover {
     background-color: #44c8ed;
     border-color: #44c8ed;
   }
 }
+
 .stats-list {
   list-style-type: none;
   clear: left;
@@ -248,5 +247,70 @@ input::placeholder{
       font-size: 0.9em;
       font-weight: normal;
     }
+  }
+}
+
+// variables
+$multilevel-accordion-bg: #4d5158;
+$multilevel-accordion-sub-bg: #35383d;
+$multilevel-accordion-separator: #41444a;
+
+.multilevel-accordion-menu {
+  // background for main accordion items
+  .is-accordion-submenu-parent a {
+    background: $multilevel-accordion-bg;
+  }
+
+  // background for sub accordion items
+  .is-accordion-submenu a {
+    background: $multilevel-accordion-sub-bg;
+  }
+
+  // creates classes for nested elements, sub-item-*
+  @for $i from 1 through 6 {
+    .sublevel-#{$i} {
+      text-indent: 0rem + $i;
+    }
+  }
+
+  a {
+    color: $white;
+    // sets accodion item separator color
+    box-shadow: inset 0 -1px $multilevel-accordion-separator;
+
+    &::after {
+      // sets accodion arrow color and direction
+      border-color: $white transparent transparent;
+    }
+  }
+
+  // padding for each list item
+  .menu > li:not(.menu-text) > a {
+    padding: 1.2rem 1rem;
+  }
+}
+
+// style for folder icon on subitem anchors without a submenu
+.multilevel-accordion-menu .is-accordion-submenu-parent[aria-expanded="true"] a.subitem::before {
+  content: "\f016";
+  font-family: FontAwesome;
+  margin-right: 1rem;
+}
+
+// changes folder icon to open then accordion is open
+.multilevel-accordion-menu .is-accordion-submenu-parent[aria-expanded="true"] a {
+  &::before {
+    content: "\f07c";
+    font-family: FontAwesome;
+    margin-right: 1rem;
+  }
+}
+
+// changes folder icon to closed then accordion is closed
+.multilevel-accordion-menu .is-accordion-submenu-parent[aria-expanded="false"] a {
+  &::before {
+    content: "\f07b";
+    font-family: FontAwesome;
+    margin-right: 1rem;
   }
 }
