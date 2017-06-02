@@ -25,9 +25,8 @@ func ToString(value interface{}) string {
 func home(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
 	then := now.AddDate(0, 0, -2)
-	now_time := now.UTC().Format(time.RFC3339)
-	then_time := then.UTC().Format(time.RFC3339)
-	fmt.Println(now)
+	now_time := now.Format(time.RFC3339)
+	then_time := then.Format(time.RFC3339)
 	vars := mux.Vars(r)
 	fmap := template.FuncMap{
 		"marshal": func(v interface {}) template.JS {
