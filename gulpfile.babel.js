@@ -119,7 +119,8 @@ function images() {
 // Start a server with BrowserSync to preview the site in
 function server(done) {
   browser.init({
-    proxy: "visualidata.local"
+    proxy: "localhost:6500"
+    // proxy: "visualidata.local"
     // server: PATHS.dist, port: PORT
   });
   done();
