@@ -7,19 +7,20 @@ function drawCircle(context, x, y, radius, color) {
 }
 
 var Circle = function(x, y, radius) {
-    this.left = x - radius;
-    this.top = y - radius;
-    this.right = parseInt(x) + radius;
-    this.bottom = parseInt(y) + radius;
+  this.left = x - radius;
+  this.top = y - radius;
+  this.right = parseInt(x) + radius;
+  this.bottom = parseInt(y) + radius;
 };
 
-function loadFloorPlan(){
+function loadFloorPlan() {
+  var current_floor = $('select[name="floor"]').val();
   var naturalWidth = 0;
   var naturalHeight = 0;
   var imgWidth = 0;
   var imgHeight = 0;
   var img_buffer = document.createElement('img');
-  img_buffer.src = '/assets/img/CHIBB_0.png';
+  img_buffer.src = '/assets/img/CHIBB_' + current_floor + '.png';
   var canvas = document.getElementById("myCanvas");
   var context = canvas.getContext('2d');
   img_buffer.onload = function() {
@@ -30,6 +31,9 @@ function loadFloorPlan(){
     canvas.width = imgWidth;
     canvas.height = imgHeight;
     context.drawImage(img_buffer, 0, 0, imgWidth, imgHeight);
+    if ($('#field_x').val() != ""){
+      drawCircle(context, $('#field_x').val(), $('#field_y').val(), 8, "black");
+    }
   }
   $('select[name="floor"]').on('change', function() {
     img_buffer.src = '/assets/img/CHIBB_' + this.value + ".png";
