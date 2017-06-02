@@ -66,5 +66,9 @@ PATHS:
     - "src/assets/js/building-blocks/searchbar-expand-on-click.js"
     - "src/assets/js/building-blocks/switch-toggle-all.js"
     - "src/assets/js/app.js"
+<<<<<<< Updated upstream
     - "src/assets/js/edit-sensor.js"
     - "src/assets/js/dashboard.js"
+=======
+    - "src/assets/js/add-edit-sensor.js"
+>>>>>>> Stashed changes
