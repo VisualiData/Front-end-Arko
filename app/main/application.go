@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"strconv"
 	"time"
+	"log"
 )
 
 func ToString(value interface{}) string {
@@ -36,7 +37,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 	// should be dynamic
 	url := BaseUrl + "/sensor/CHIBB-Test-01/" + then_time + "/" + now_time + "/Temperature"
 	if vars["sensor_id"] != "" {
-		url = BaseUrl + "/sensor/"+ vars["sensor_id"]+"/2017-05-27T00:00:00/2017-05-29T13:15:00/Temperature"
+		url = BaseUrl + "/sensor/"+ vars["sensor_id"]+"/" + then_time + "/" + now_time + "/Temperature"
 	}
 	result := getSensorData(url)
 	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/home.html")
@@ -63,37 +64,34 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 
 	result := getData(url)
 	if len(result.Data) > 0 {
-		fmt.Println(result.Data)
-	}
-	// TODO show 404 when result is empty
-	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/dashboard.html")
-	if err != nil {
-		fmt.Fprint(w, "Error:", err)
-		fmt.Println("Error:", err)
-		return
-	}
+		t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/dashboard.html")
+		if err != nil {
+			fmt.Fprint(w, "Error:", err)
+			fmt.Println("Error:", err)
+			return
+		}
 
-	t.Execute(w, result)
+		t.Execute(w, result)
+	}else {
+		notFound(w, r)
+	}
 }
 
 func house(w http.ResponseWriter, r *http.Request){
 	vars := mux.Vars(r)
 	url := BaseUrl + "/house/" + vars["house"]
 	if vars["floor"] != "" {
-		//fmt.Println(vars["floor"])
 		url = url + "/" + vars["floor"]
 	} else {
 		fmt.Println("No floor")
 	}
 	result := getData(url)
-	//result := "test"
 	fmt.Println(result.Data)
 	t, _ := template.ParseFiles("dist/index.html")
 	t.Execute(w, r)
 }
 
 func add_sensor_view(w http.ResponseWriter, r *http.Request) {
-	//response := &Response{200, nil, "Toegevoegd", "success"}
 	response := &Response{0, nil, "", ""}
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/addsensor.html")
 	t.Execute(w, response)
@@ -123,8 +121,6 @@ func edit_sensor_view(w http.ResponseWriter, r *http.Request) {
 	}
 
 	t.Execute(w, result)
-	//t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/editsensor.html")
-	//t.Execute(w, result)
 }
 
 func edit_sensor(w http.ResponseWriter, r *http.Request) {
@@ -146,6 +142,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, r)
 }
 
+func notFound(w http.ResponseWriter, r *http.Request){
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/error/404.html")
+	t.Execute(w, r)
+}
+
 func check_login(w http.ResponseWriter, r *http.Request){
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/login.html")
 	fmt.Println(r.FormValue("username"))
@@ -153,5 +154,12 @@ func check_login(w http.ResponseWriter, r *http.Request){
 	t.Execute(w, r)
 }
 func main(){
-	run()
+	//http.Handle("/", routes())
+	//http.ListenAndServe(":6500", nil)
+	srv := &http.Server{
+		Handler: routes(),
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout: 15 * time.Second,
+	}
+	log.Fatal(srv.ListenAndServe())
 }
