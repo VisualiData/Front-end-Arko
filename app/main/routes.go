@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func routes() *mux{
+func routes() *mux.Router{
 	r := mux.NewRouter()
 	// exclude route matching of assets folder
 	fs := http.FileServer(http.Dir("dist/assets/"))
@@ -21,11 +21,12 @@ func routes() *mux{
 	r.HandleFunc("/dashboard", dashboard)
 	r.HandleFunc("/dashboard/{house}", dashboard)
 	// sensor routes
-	r.HandleFunc("/sensor/add", add_sensor_view).Methods("GET")
-	r.HandleFunc("/sensor/add", add_sensor).Methods("POST")
+	s := r.PathPrefix("/sensor").Subrouter()
+	s.HandleFunc("/add", add_sensor_view).Methods("GET")
+	s.HandleFunc("/add", add_sensor).Methods("POST")
 
-	r.HandleFunc("/sensor/edit/{sensor_id}", edit_sensor_view).Methods("GET").Name("sensorEdit")
-	r.HandleFunc("/sensor/edit", edit_sensor).Methods("POST")
+	s.HandleFunc("/edit/{sensor_id}", edit_sensor_view).Methods("GET").Name("sensorEdit")
+	s.HandleFunc("/edit", edit_sensor).Methods("POST")
 	//r.NotFoundHandler = http.HandleFunc(notFound)
 	//r.HandleFunc("/floorplan/{house}", house).Methods("GET")
 	//r.HandleFunc("/floorplan/{house}/{floor}", house).Methods("GET")

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"html/template"
 	"net/http"
 	"encoding/json"
@@ -10,6 +11,8 @@ import (
 	"time"
 	"log"
 )
+
+var store = sessions.NewCookieStore([]byte("V!sual1D@ta"))
 
 func ToString(value interface{}) string {
 	switch v := value.(type) {
@@ -34,6 +37,8 @@ func home(w http.ResponseWriter, r *http.Request) {
 			a, _ := json.Marshal(v)
 			return template.JS(a)
 		}}
+	session, err := store.Get(r, "front-end")
+	fmt.Println(session.Flashes())
 	// should be dynamic
 	url := BaseUrl + "/sensor/CHIBB-Test-01/" + then_time + "/" + now_time + "/Temperature"
 	if vars["sensor_id"] != "" {
@@ -93,6 +98,13 @@ func house(w http.ResponseWriter, r *http.Request){
 
 func add_sensor_view(w http.ResponseWriter, r *http.Request) {
 	response := &Response{0, nil, "", ""}
+	session, err := store.Get(r, "front-end")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	session.AddFlash("Hello")
+	session.Save(r, w)
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/addsensor.html")
 	t.Execute(w, response)
 }
@@ -132,9 +144,12 @@ func edit_sensor(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		print(err)
 	}
-	response := post_data(b, BaseUrl + "/sensor/update")
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/editsensor.html")
-	t.Execute(w, response)
+	post_data(b, BaseUrl + "/sensor/update")
+	url, err := mux.CurrentRoute(r).Subrouter().Get("sensorEdit").URL("sensor_id", r.FormValue("sensor_id"))
+	http.Redirect(w, r, url.String(), 302)
+	//http.Redirect(w, r, )
+	//t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/editsensor.html")
+	//t.Execute(w, response)
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
@@ -157,6 +172,7 @@ func main(){
 	//http.Handle("/", routes())
 	//http.ListenAndServe(":6500", nil)
 	srv := &http.Server{
+		Addr: "192.168.0.18:6500",
 		Handler: routes(),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout: 15 * time.Second,
