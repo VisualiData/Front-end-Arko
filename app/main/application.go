@@ -55,9 +55,17 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 			a, _ := json.Marshal(v)
 			return template.JS(a)
 	}}
+	vars := mux.Vars(r)
 	url := BaseUrl + "/house/CHIBB"
-	result := getData(url)
+	if vars["house"] != "" {
+		url = BaseUrl + "/house/" + vars["house"]
+	}
 
+	result := getData(url)
+	if len(result.Data) > 0 {
+		fmt.Println(result.Data)
+	}
+	// TODO show 404 when result is empty
 	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/dashboard.html")
 	if err != nil {
 		fmt.Fprint(w, "Error:", err)
@@ -145,23 +153,5 @@ func check_login(w http.ResponseWriter, r *http.Request){
 	t.Execute(w, r)
 }
 func main(){
-	r := mux.NewRouter()
-	// exclude route matching of assets folder
-	fs := http.FileServer(http.Dir("dist/assets/"))
-	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
-
-	r.HandleFunc("/", home)
-	r.HandleFunc("/home/{sensor_id}", home)
-	r.HandleFunc("/login", login).Methods("GET")
-	r.HandleFunc("/login", check_login).Methods("POST")
-
-	r.HandleFunc("/dashboard", dashboard)
-	r.HandleFunc("/sensor/add", add_sensor_view).Methods("GET")
-	r.HandleFunc("/sensor/add", add_sensor).Methods("POST")
-	r.HandleFunc("/sensor/edit/{sensor_id}", edit_sensor_view).Methods("GET")
-	r.HandleFunc("/sensor/edit", edit_sensor).Methods("POST")
-	//r.HandleFunc("/floorplan/{house}", house).Methods("GET")
-	//r.HandleFunc("/floorplan/{house}/{floor}", house).Methods("GET")
-	http.Handle("/", r)
-	http.ListenAndServe(":6500", nil)
+	run()
 }
