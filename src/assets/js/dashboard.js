@@ -61,7 +61,7 @@ function dashboard(data) {
         } else {
           inactive++;
         }
-        var circle = new Circle(sensor.position.x, sensor.position.y, 10)
+        var circle = new Circle(sensor.position.x, sensor.position.y, 10, sensor);
         circles.push(circle);
         drawCircle(context, sensor.position.x, sensor.position.y, 10, color);
       });
@@ -93,7 +93,19 @@ function check_clicked(coordinates, circles) {
   var y = coordinates[1];
   for (var i = 0; i < circles.length; i++) {
     if (x < circles[i].right && x > circles[i].left && y > circles[i].top && y < circles[i].bottom) {
-      console.log("clicked on circle");
+      $('#exampleModal1').html(sensor_info(circles[i].sensor_info)).foundation('open');
     }
   }
+}
+
+function sensor_info(data){
+  var html = "<h1>" + data.sensor_id + "</h1>";
+  html += "<p>House: " + data.position.house + "<br>";
+  html += "Floor: " + data.position.floor + "</p>";
+  html += "<p>Status: " + data.status + "<br>";
+  html += "Type: " + data.type + "<br>";
+  html += "Node: " + data.nodeName + "<br>";
+  html += "Node type: " + data.nodeType + "</p>";
+  html += '<button class="close-button" data-close aria-label="Close reveal" type="button"><span aria-hidden="true">&times;</span></button>';
+  return html;
 }

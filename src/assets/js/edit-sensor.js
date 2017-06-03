@@ -6,11 +6,12 @@ function drawCircle(context, x, y, radius, color) {
   context.stroke();
 }
 
-var Circle = function(x, y, radius) {
+var Circle = function(x, y, radius, sensor_info) {
   this.left = x - radius;
   this.top = y - radius;
   this.right = parseInt(x) + radius;
   this.bottom = parseInt(y) + radius;
+  this.sensor_info = sensor_info;
 };
 
 function loadFloorPlan() {
