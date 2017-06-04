@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 	"log"
+	"encoding/gob"
 )
 
 var store = sessions.NewCookieStore([]byte("V!sual1D@ta"))
@@ -26,36 +27,48 @@ func ToString(value interface{}) string {
 	}
 }
 
+type ViewData struct {
+	Flash[] FlashMessage
+	Data    interface{}
+}
+
 func home(w http.ResponseWriter, r *http.Request) {
-	now := time.Now()
-	then := now.AddDate(0, 0, -2)
-	now_time := now.Format(time.RFC3339)
-	then_time := then.Format(time.RFC3339)
 	vars := mux.Vars(r)
+
+	now := time.Now().Format(time.RFC3339)
+	before := time.Now().AddDate(0, 0, -2).Format(time.RFC3339)
+
 	fmap := template.FuncMap{
 		"marshal": func(v interface {}) template.JS {
 			a, _ := json.Marshal(v)
 			return template.JS(a)
 		}}
 	session, err := store.Get(r, "front-end")
-	fmt.Println(session.Flashes())
-	// should be dynamic
-	url := BaseUrl + "/sensor/CHIBB-Test-01/" + then_time + "/" + now_time + "/Temperature"
+
+	url := BaseUrl + "/sensor/CHIBB-Test-01/" + before + "/" + now + "/Temperature"
 	if vars["sensor_id"] != "" {
-		url = BaseUrl + "/sensor/"+ vars["sensor_id"]+"/" + then_time + "/" + now_time + "/Temperature"
+		url = BaseUrl + "/sensor/"+ vars["sensor_id"]+"/" + before + "/" + now + "/Temperature"
 	}
 	result := getSensorData(url)
-	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/home.html")
+	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/home.html")
 	if err != nil {
 		fmt.Fprint(w, "Error:", err)
 		fmt.Println("Error:", err)
 		return
 	}
-
-	t.Execute(w, result)
+	fmt.Println(session.Flashes())
+	session.Save(r, w)
+	vd := ViewData{
+		Flash: getFlashMessages(w, r),
+		Data: result,
+	}
+	t.Execute(w, vd)
 }
 
 func dashboard(w http.ResponseWriter, r *http.Request) {
+	session, _ := store.Get(r, "front-end")
+	session.AddFlash("test")
+	session.Save(r, w)
 	fmap := template.FuncMap{
 		"marshal": func(v interface {}) template.JS {
 			a, _ := json.Marshal(v)
@@ -69,14 +82,18 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 
 	result := getData(url)
 	if len(result.Data) > 0 {
-		t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/dashboard.html")
+		t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/dashboard.html")
 		if err != nil {
 			fmt.Fprint(w, "Error:", err)
 			fmt.Println("Error:", err)
 			return
 		}
 
-		t.Execute(w, result)
+		vd := ViewData{
+			Flash: getFlashMessages(w, r),
+			Data: result,
+		}
+		t.Execute(w, vd)
 	}else {
 		notFound(w, r)
 	}
@@ -96,79 +113,26 @@ func house(w http.ResponseWriter, r *http.Request){
 	t.Execute(w, r)
 }
 
-func add_sensor_view(w http.ResponseWriter, r *http.Request) {
-	response := &Response{0, nil, "", ""}
-	session, err := store.Get(r, "front-end")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	session.AddFlash("Hello")
-	session.Save(r, w)
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/addsensor.html")
-	t.Execute(w, response)
-}
 
-func add_sensor(w http.ResponseWriter, r *http.Request) {
-	location := Position{r.FormValue("x_coordinate"), r.FormValue("y_coordinate"), r.FormValue("floor"), "CHIBB"}
-	s := Sensor{r.FormValue("sensor_id"), r.FormValue("sensorType"), r.FormValue("nodeName"), r.FormValue("nodeType"), location, "active"}
-	b, err := json.Marshal(s)
-	if err != nil {
-		print(err)
-	}
-	response := post_data(b, BaseUrl + "/sensor")
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/addsensor.html")
-	t.Execute(w, response)
-}
-
-func edit_sensor_view(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	url := BaseUrl + "/sensor/" + vars["sensor_id"]
-	result := getDataSingle(url)
-	t, err := template.New("index.html").Funcs(template.FuncMap{"tostring": ToString}).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/editsensor.html")
-	if err != nil {
-		fmt.Fprint(w, "Error:", err)
-		fmt.Println("Error:", err)
-		return
-	}
-
-	t.Execute(w, result)
-}
-
-func edit_sensor(w http.ResponseWriter, r *http.Request) {
-	location := Position{r.FormValue("x_coordinate"), r.FormValue("y_coordinate"), r.FormValue("floor"), "CHIBB"}
-	fmt.Println(r.FormValue("x_coordinate"));
-	fmt.Println(r.FormValue("y_coordinate"));
-	s := Sensor{r.FormValue("sensor_id"), r.FormValue("sensorType"), r.FormValue("nodeName"), r.FormValue("nodeType"), location, "active"}
-	b, err := json.Marshal(s)
-	if err != nil {
-		print(err)
-	}
-	post_data(b, BaseUrl + "/sensor/update")
-	url, err := mux.CurrentRoute(r).Subrouter().Get("sensorEdit").URL("sensor_id", r.FormValue("sensor_id"))
-	http.Redirect(w, r, url.String(), 302)
-	//http.Redirect(w, r, )
-	//t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/editsensor.html")
-	//t.Execute(w, response)
-}
 
 func login(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/login.html")
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/login.html")
 	t.Execute(w, r)
 }
 
 func notFound(w http.ResponseWriter, r *http.Request){
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/error/404.html")
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/error/404.html")
 	t.Execute(w, r)
 }
 
 func check_login(w http.ResponseWriter, r *http.Request){
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/pages/login.html")
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/login.html")
 	fmt.Println(r.FormValue("username"))
 	fmt.Println(r.FormValue("password"))
 	t.Execute(w, r)
 }
 func main(){
+	gob.Register(&FlashMessage{})
 	//http.Handle("/", routes())
 	//http.ListenAndServe(":6500", nil)
 	srv := &http.Server{

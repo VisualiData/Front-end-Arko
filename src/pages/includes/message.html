@@ -1,0 +1,13 @@
+{{ define "message" }}
+  {{range .Flash}}
+  <br>
+  <div class="columns large-16 align-center">
+    <div class="{{.Type}} callout" data-closeable>
+      <p>{{.Message}}</p>
+      <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
+      <span aria-hidden="true">&times;</span>
+    </button>
+    </div>
+  </div>
+  {{ end }}
+{{ end }}

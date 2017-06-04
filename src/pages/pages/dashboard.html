@@ -36,7 +36,7 @@
 
 <script>
   $(document).ready(function() {
-    var data = {{ marshal .Data }};
+    var data = {{ marshal .Data.Data }};
     dashboard(data);
     var elem = new Foundation.AccordionMenu($('#sensors'));
     $('#sensors').foundation('showAll');
