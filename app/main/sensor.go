@@ -36,8 +36,11 @@ func edit_sensor_view(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error:", err)
 		return
 	}
-
-	t.Execute(w, result)
+	vd := ViewData{
+		Flash: getFlashMessages(w, r),
+		Data: result,
+	}
+	t.Execute(w, vd)
 }
 
 func edit_sensor(w http.ResponseWriter, r *http.Request) {
@@ -48,6 +51,7 @@ func edit_sensor(w http.ResponseWriter, r *http.Request) {
 		print(err)
 	}
 	post_data(b, BaseUrl + "/sensor/update")
+	addFlashMessage(w, r, FlashMessage{Message: "sensor updated", Type: "success"})
 	url, err := mux.CurrentRoute(r).Subrouter().Get("sensorEdit").URL("sensor_id", r.FormValue("sensor_id"))
 	http.Redirect(w, r, url.String(), 302)
 }

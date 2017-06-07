@@ -27,6 +27,11 @@ func ToString(value interface{}) string {
 	}
 }
 
+func Marshal(value interface{}) template.JS {
+	a, _ := json.Marshal(value)
+	return template.JS(a);
+}
+
 type ViewData struct {
 	Flash[] FlashMessage
 	Data    interface{}
@@ -35,29 +40,20 @@ type ViewData struct {
 func home(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
-	now := time.Now().Format(time.RFC3339)
-	before := time.Now().AddDate(0, 0, -2).Format(time.RFC3339)
+	current_time := time.Now().Format(time.RFC3339)
+	two_days_ago := time.Now().AddDate(0, 0, -2).Format(time.RFC3339)
 
-	fmap := template.FuncMap{
-		"marshal": func(v interface {}) template.JS {
-			a, _ := json.Marshal(v)
-			return template.JS(a)
-		}}
-	session, err := store.Get(r, "front-end")
-
-	url := BaseUrl + "/sensor/CHIBB-Test-01/" + before + "/" + now + "/Temperature"
+	url := BaseUrl + "/sensor/CHIBB-Test-01/" + two_days_ago + "/" + current_time + "/Temperature"
 	if vars["sensor_id"] != "" {
-		url = BaseUrl + "/sensor/"+ vars["sensor_id"]+"/" + before + "/" + now + "/Temperature"
+		url = BaseUrl + "/sensor/"+ vars["sensor_id"]+"/" + two_days_ago + "/" + current_time + "/Temperature"
 	}
-	result := getSensorData(url)
-	t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/home.html")
+	result := getData(url)
+	t, err := template.New("index.html").Funcs(template.FuncMap{"marshal": Marshal}).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/home.html")
 	if err != nil {
 		fmt.Fprint(w, "Error:", err)
 		fmt.Println("Error:", err)
 		return
 	}
-	fmt.Println(session.Flashes())
-	session.Save(r, w)
 	vd := ViewData{
 		Flash: getFlashMessages(w, r),
 		Data: result,
@@ -66,54 +62,34 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func dashboard(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "front-end")
-	session.AddFlash("test")
-	session.Save(r, w)
-	fmap := template.FuncMap{
-		"marshal": func(v interface {}) template.JS {
-			a, _ := json.Marshal(v)
-			return template.JS(a)
-	}}
 	vars := mux.Vars(r)
-	url := BaseUrl + "/house/CHIBB"
+	get_sensors_url := BaseUrl + "/house/CHIBB"
+	get_house_url := BaseUrl + "/house-info/CHIBB"
 	if vars["house"] != "" {
-		url = BaseUrl + "/house/" + vars["house"]
+		get_sensors_url = BaseUrl + "/house/" + vars["house"]
+		get_house_url = BaseUrl + "/house-info/" + vars["house"]
 	}
 
-	result := getData(url)
-	if len(result.Data) > 0 {
-		t, err := template.New("index.html").Funcs(fmap).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/dashboard.html")
+	house := getDataSingle(get_house_url)
+	sensors := getData(get_sensors_url)
+	if len(sensors.Data) > 0 {
+		t, err := template.New("index.html").Funcs(template.FuncMap{"marshal": Marshal}).
+				ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/dashboard.html")
 		if err != nil {
 			fmt.Fprint(w, "Error:", err)
 			fmt.Println("Error:", err)
 			return
 		}
-
+		values := []interface{}{0: sensors.Data, 1: house.Data}
 		vd := ViewData{
 			Flash: getFlashMessages(w, r),
-			Data: result,
+			Data: values,
 		}
 		t.Execute(w, vd)
 	}else {
 		notFound(w, r)
 	}
 }
-
-func house(w http.ResponseWriter, r *http.Request){
-	vars := mux.Vars(r)
-	url := BaseUrl + "/house/" + vars["house"]
-	if vars["floor"] != "" {
-		url = url + "/" + vars["floor"]
-	} else {
-		fmt.Println("No floor")
-	}
-	result := getData(url)
-	fmt.Println(result.Data)
-	t, _ := template.ParseFiles("dist/index.html")
-	t.Execute(w, r)
-}
-
-
 
 func login(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/login.html")
@@ -133,8 +109,6 @@ func check_login(w http.ResponseWriter, r *http.Request){
 }
 func main(){
 	gob.Register(&FlashMessage{})
-	//http.Handle("/", routes())
-	//http.ListenAndServe(":6500", nil)
 	srv := &http.Server{
 		Addr: "192.168.0.18:6500",
 		Handler: routes(),

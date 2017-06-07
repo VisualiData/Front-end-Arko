@@ -12,22 +12,16 @@ import (
 var BaseUrl = "http://192.168.0.18:4567";
 var API_Key = "dev";
 
-type DataResponse struct {
-	Code int `json:"statuscode"`
-	Data[] SensorData `json:"data"`
-	Message string `json:"message"`
-	Status string `json:"status"`
-}
 type Response struct {
 	Code int `json:"statuscode"`
-	Data[] Sensor `json:"data"`
+	Data[] interface{} `json:"data"`
 	Message string `json:"message"`
 	Status string `json:"status"`
 }
 
 type ResponseSingle struct {
 	Code int `json:"statuscode"`
-	Data Sensor `json:"data"`
+	Data interface{} `json:"data"`
 	Message string `json:"message"`
 	Status string `json:"status"`
 }
@@ -47,33 +41,11 @@ type Position struct {
 	House string `json:"house"`
 }
 
-type SensorData struct {
-	Timestamp string `json:"timestamp"`
-	Type string `json:"type"`
-	Value float64 `json:"value"`
-}
-
-func getSensorData(url string) *DataResponse{
-	client :=  &http.Client{}
-	req, _ := http.NewRequest("GET", url, nil)
-	req.Header.Add("Authorization", API_Key)
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Print(err)
-	}
-	defer resp.Body.Close()
-	resp_body, err := ioutil.ReadAll(resp.Body)
-	var response = new(DataResponse)
-	err = json.Unmarshal(resp_body, response)
-	if(err != nil){
-		fmt.Println("whoops:", err)
-	}
-	return response
-}
 func getData(url string) *Response{
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Authorization", API_Key)
+	req.Header.Add("From", "Arko")
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
@@ -92,6 +64,7 @@ func getDataSingle(url string) *ResponseSingle{
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)
 	req.Header.Add("Authorization", API_Key)
+	req.Header.Add("From", "Arko")
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Print(err)
@@ -111,6 +84,7 @@ func post_data(data []byte, url string) *Response {
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	req.Header.Add("Authorization", API_Key)
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("From", "Arko")
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Print(err)

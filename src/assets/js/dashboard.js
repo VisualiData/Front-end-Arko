@@ -1,36 +1,39 @@
 function dashboard(data) {
+  var sensors = data[0];
+  var house = data[1];
   var circles = [];
   var active = 0;
   var warning = 0;
   var inactive = 0;
-  var plans = ["CHIBB_0", "CHIBB_1", "CHIBB_2"];
+  var plans = data[1].floors;
   var floorplans = {};
-  fillSensorList(data);
+  fillSensorList(sensors);
 
   plans.forEach(function(value) {
+    var floor_id = house.house_id + value.floor;
     var newFloor = {
-      "floor_plan": value
+      "floor_plan": floor_id
     };
 
     var $div = $("<div>", {
-      id: value,
+      id: floor_id,
       "class": "columns large-12"
     });
     $("#floor_plan_container").append($div);
     $('<p></p>', {
-      id: "p_" + value,
+      id: "p_" + floor_id,
       'style': 'text-align: center;',
-      'text': value
-    }).appendTo("#" + value);
+      'text': floor_id
+    }).appendTo("#" + floor_id);
     var image = document.createElement('img');
-    image.src = '/assets/img/' + value + '.png';
+    image.src = '/assets/img/' + value.floorplan;
     $('<canvas></canvas>', {
-      id: "canvas_" + value,
+      id: "canvas_" + floor_id,
       class: "floor_plan",
       'style': 'width: 100%'
-    }).appendTo("#" + value);
-    var canvas = document.getElementById("canvas_" + value);
-    newFloor["canvas"] = "canvas_" + value;
+    }).appendTo("#" + floor_id);
+    var canvas = document.getElementById("canvas_" + floor_id);
+    newFloor["canvas"] = "canvas_" + floor_id;
     var context = canvas.getContext('2d');
     image.onload = function() {
       var imgWidth = image.width;
@@ -42,9 +45,8 @@ function dashboard(data) {
       canvas.width = imgWidth;
       canvas.height = imgHeight;
       context.drawImage(image, 0, 0, imgWidth, imgHeight);
-      var vars = value.split("_");
-      var wanted = data.filter(function(item) {
-        return (item.position.floor == vars[1] && item.position.house == vars[0]);
+      var wanted = sensors.filter(function(item) {
+        return (item.position.floor == value.floor && item.position.house == house.house_id);
       });
       wanted.forEach(function(sensor) {
         var color = "red";
