@@ -1,13 +1,5 @@
-{{ define "content" }}<br> {{ if .Message }}
-<div class="columns large-16 align-center">
-  <div class="{{.Status}} callout" data-closeable>
-    <p>{{.Message}}</p>
-    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-    <span aria-hidden="true">&times;</span>
-  </button>
-  </div>
-</div>
-{{end}}
+{{ define "content" }}
+<br>
 <div class="columns large-4 align-center container-padded">
   <form method="post" action="sensor/add">
     <div class="sign-in-form">
@@ -32,7 +24,7 @@
     </div>
   </form>
 </div>
-<div class="columns large-8 align-center container-padded" id="floor_plan_container">
+<div class="columns large-12 align-center container-padded" id="floor_plan_container">
 
   <canvas id="myCanvas" style="width: 100%;">
 Your browser does not support the HTML5 canvas tag.

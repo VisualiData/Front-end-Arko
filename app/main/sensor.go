@@ -8,13 +8,32 @@ import (
 	"html/template"
 )
 
-func add_sensor_view(w http.ResponseWriter, r *http.Request) {
-	response := &Response{0, nil, "", ""}
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/addsensor.html")
-	t.Execute(w, response)
+type Sensor struct {
+	ID string `json:"sensor_id"`
+	Type string `json:"type"`
+	NodeName string `json:"nodeName"`
+	NodeType string `json:"nodeType"`
+	Location Position `json:"position"`
+	Status string `json:"status"`
+}
+type Position struct {
+	X string `json:"x"`
+	Y string `json:"y"`
+	Floor string `json:"floor"`
+	House string `json:"house"`
 }
 
-func add_sensor(w http.ResponseWriter, r *http.Request) {
+func AddSensorView(w http.ResponseWriter, r *http.Request) {
+	response := &Response{0, nil, "", ""}
+	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/addsensor.html")
+	vd := ViewData{
+		Flash: getFlashMessages(w, r),
+		Data: response,
+	}
+	t.Execute(w, vd)
+}
+
+func AddSensor(w http.ResponseWriter, r *http.Request) {
 	location := Position{r.FormValue("x_coordinate"), r.FormValue("y_coordinate"), r.FormValue("floor"), "CHIBB"}
 	s := Sensor{r.FormValue("sensor_id"), r.FormValue("sensorType"), r.FormValue("nodeName"), r.FormValue("nodeType"), location, "active"}
 	b, err := json.Marshal(s)
@@ -22,11 +41,11 @@ func add_sensor(w http.ResponseWriter, r *http.Request) {
 		print(err)
 	}
 	response := post_data(b, BaseUrl + "/sensor")
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/addsensor.html")
-	t.Execute(w, response)
+	addFlashMessage(w, r, FlashMessage{Message: response.Message, Type: response.Status})
+	http.Redirect(w, r, "/sensor/add", 302)
 }
 
-func edit_sensor_view(w http.ResponseWriter, r *http.Request) {
+func EditSensorView(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	url := BaseUrl + "/sensor/" + vars["sensor_id"]
 	result := getDataSingle(url)
@@ -38,20 +57,20 @@ func edit_sensor_view(w http.ResponseWriter, r *http.Request) {
 	}
 	vd := ViewData{
 		Flash: getFlashMessages(w, r),
-		Data: result,
+		Data: result.Data,
 	}
 	t.Execute(w, vd)
 }
 
-func edit_sensor(w http.ResponseWriter, r *http.Request) {
+func EditSensor(w http.ResponseWriter, r *http.Request) {
 	location := Position{r.FormValue("x_coordinate"), r.FormValue("y_coordinate"), r.FormValue("floor"), "CHIBB"}
 	s := Sensor{r.FormValue("sensor_id"), r.FormValue("sensorType"), r.FormValue("nodeName"), r.FormValue("nodeType"), location, "active"}
+	fmt.Println(s)
 	b, err := json.Marshal(s)
 	if err != nil {
 		print(err)
 	}
 	post_data(b, BaseUrl + "/sensor/update")
 	addFlashMessage(w, r, FlashMessage{Message: "sensor updated", Type: "success"})
-	url, err := mux.CurrentRoute(r).Subrouter().Get("sensorEdit").URL("sensor_id", r.FormValue("sensor_id"))
-	http.Redirect(w, r, url.String(), 302)
+	http.Redirect(w, r, "/sensor/edit/"+r.FormValue("sensor_id"), 302)
 }
