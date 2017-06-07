@@ -12,23 +12,20 @@ func routes() *mux.Router{
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
 	// start page
 	r.HandleFunc("/", home)
-
 	r.HandleFunc("/home/{sensor_id}", home)
 	// login routes
 	r.HandleFunc("/login", login).Methods("GET")
 	r.HandleFunc("/login", check_login).Methods("POST")
 	// dashboard routes
-	r.HandleFunc("/dashboard", dashboard)
+	r.HandleFunc("/dashboard", dashboard).Name("dashboard")
 	r.HandleFunc("/dashboard/{house}", dashboard)
 	// sensor routes
-	s := r.PathPrefix("/sensor").Subrouter()
-	s.HandleFunc("/add", add_sensor_view).Methods("GET")
-	s.HandleFunc("/add", add_sensor).Methods("POST")
+	//s := r.PathPrefix("/sensor").Subrouter()
+	r.HandleFunc("/sensor/add", AddSensorView).Methods("GET").Name("sensorAdd")
+	r.HandleFunc("/sensor/add", AddSensor).Methods("POST")
 
-	s.HandleFunc("/edit/{sensor_id}", edit_sensor_view).Methods("GET").Name("sensorEdit")
-	s.HandleFunc("/edit", edit_sensor).Methods("POST")
-	//r.NotFoundHandler = http.HandleFunc(notFound)
-	//r.HandleFunc("/floorplan/{house}", house).Methods("GET")
-	//r.HandleFunc("/floorplan/{house}/{floor}", house).Methods("GET")
+	r.HandleFunc("/sensor/edit", EditSensor).Methods("POST")
+	r.HandleFunc("/sensor/edit/{sensor_id}", EditSensorView).Methods("GET").Name("sensorEdit")
+	r.NotFoundHandler = http.HandlerFunc(notFound)
 	return r
 }

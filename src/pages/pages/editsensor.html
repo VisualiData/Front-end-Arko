@@ -1,34 +1,25 @@
-{{ define "content" }}<br> {{ if .Message }}
-<div class="columns large-16 align-center">
-  <div class="{{.Status}} callout" data-closeable>
-    <p>{{.Message}}</p>
-    <button class="close-button" aria-label="Dismiss alert" type="button" data-close>
-    <span aria-hidden="true">&times;</span>
-  </button>
-  </div>
-</div>
-{{end}}
-<p>{{ $floor := .Data.Location.Floor | tostring }}</p>
+{{ define "content" }}
+<p>{{ $floor := .Data.position.floor | tostring }}</p>
 <div class="columns large-4 align-center container-padded">
   <form method="post" action="sensor/edit">
     <div class="sign-in-form">
       <h4 class="text-center">Update sensor</h4>
       <label for="sign-in-form-username">Sensor ID / Sensor name</label>
-      <input type="text" name="sensor_id" placeholder="CHIBB-Node-1" value="{{ .Data.ID }}" required>
+      <input type="text" name="sensor_id" placeholder="CHIBB-Node-1" value="{{ .Data.sensor_id }}" readonly required>
       <label for="sign-in-form-password">Type(s)</label>
-      <input type="text" name="sensorType" placeholder="Temperature" value="{{ .Data.Type }}" required>
+      <input type="text" name="sensorType" placeholder="Temperature" value="{{ .Data.type }}" required>
       <label for="sign-in-form-password">Node name</label>
-      <input type="text" name="nodeName" value="{{ .Data.NodeName }}">
+      <input type="text" name="nodeName" value="{{ .Data.nodeName }}">
       <label for="sign-in-form-password">Node type</label>
-      <input type="text" name="nodeType" value="{{ .Data.NodeType }}">
+      <input type="text" name="nodeType" value="{{ .Data.nodeType }}">
       <label for="sign-in-form-password">Node type</label>
       <select name="floor">
         <option value="0">Begane grond</option>
         <option value="1"{{ if eq $floor "1" }}selected="selected"{{ end }}>Eerste verdieping</option>
         <option value="2"{{ if eq $floor "2" }}selected="selected"{{ end }}>Tweede verdieping</option>
       </select>
-      <input type="hidden" name="x_coordinate" id="field_x" class="form-input-field" value="{{ .Data.Location.X }}" required>
-      <input type="hidden" name="y_coordinate" id="field_y" class="form-input-field" value="{{ .Data.Location.Y }}" required>
+      <input type="hidden" name="x_coordinate" id="field_x" class="form-input-field" value="{{ .Data.position.x }}" required>
+      <input type="hidden" name="y_coordinate" id="field_y" class="form-input-field" value="{{ .Data.position.y }}" required>
       <button type="submit" class="sign-in-form-button">Update</button>
     </div>
   </form>

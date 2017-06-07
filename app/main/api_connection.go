@@ -26,21 +26,6 @@ type ResponseSingle struct {
 	Status string `json:"status"`
 }
 
-type Sensor struct {
-	ID string `json:"sensor_id"`
-	Type string `json:"type"`
-	NodeName string `json:"nodeName"`
-	NodeType string `json:"nodeType"`
-	Location Position `json:"position"`
-	Status string `json:"status"`
-}
-type Position struct {
-	X string `json:"x"`
-	Y string `json:"y"`
-	Floor string `json:"floor"`
-	House string `json:"house"`
-}
-
 func getData(url string) *Response{
 	client :=  &http.Client{}
 	req, _ := http.NewRequest("GET", url, nil)

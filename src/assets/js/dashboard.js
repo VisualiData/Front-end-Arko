@@ -1,37 +1,23 @@
 function dashboard(data) {
   var sensors = data[0];
   var house = data[1];
-  var circles = [];
   var active = 0;
   var warning = 0;
   var inactive = 0;
-  var plans = data[1].floors;
+
+  var drawnSensors = [];
   var floorplans = {};
   fillSensorList(sensors);
 
-  plans.forEach(function(value) {
+  house.floors.forEach(function(value) {
     var floor_id = house.house_id + value.floor;
     var newFloor = {
       "floor_plan": floor_id
     };
 
-    var $div = $("<div>", {
-      id: floor_id,
-      "class": "columns large-12"
-    });
-    $("#floor_plan_container").append($div);
-    $('<p></p>', {
-      id: "p_" + floor_id,
-      'style': 'text-align: center;',
-      'text': floor_id
-    }).appendTo("#" + floor_id);
+    createCanvas(floor_id);
     var image = document.createElement('img');
     image.src = '/assets/img/' + value.floorplan;
-    $('<canvas></canvas>', {
-      id: "canvas_" + floor_id,
-      class: "floor_plan",
-      'style': 'width: 100%'
-    }).appendTo("#" + floor_id);
     var canvas = document.getElementById("canvas_" + floor_id);
     newFloor["canvas"] = "canvas_" + floor_id;
     var context = canvas.getContext('2d');
@@ -60,21 +46,39 @@ function dashboard(data) {
           inactive++;
         }
         var circle = new Circle(sensor.position.x, sensor.position.y, 10, sensor);
-        circles.push(circle);
+        drawnSensors.push(circle);
         drawCircle(context, sensor.position.x, sensor.position.y, 10, color);
       });
       $("#active").text(active);
       $("#warning").text(warning);
       $("#inactive").text(inactive);
     }
-    floorplans[value] = newFloor;
+    floorplans[floor_id] = newFloor;
   });
 
   $('.floor_plan').click(function(e) {
     var clickedCanvas = e.target.id.replace("canvas_", "");
     var clickedCoordinates = getClickedCoordinates(e, this, floorplans[clickedCanvas]);
-    checkClickedPosition(clickedCoordinates, circles);
+    checkClickedPosition(clickedCoordinates, drawnSensors);
   });
+}
+
+function createCanvas(floor_id) {
+  var $div = $("<div>", {
+    id: floor_id,
+    "class": "columns large-12"
+  });
+  $("#floor_plan_container").append($div);
+  $('<p></p>', {
+    id: "p_" + floor_id,
+    'style': 'text-align: center;',
+    'text': floor_id
+  }).appendTo("#" + floor_id);
+  $('<canvas></canvas>', {
+    id: "canvas_" + floor_id,
+    class: "floor_plan",
+    'style': 'width: 100%'
+  }).appendTo("#" + floor_id);
 }
 
 function getClickedCoordinates(event, _self, floor_plan) {
@@ -89,18 +93,18 @@ function getClickedCoordinates(event, _self, floor_plan) {
   };
 }
 
-function checkClickedPosition(coordinates, circles) {
+function checkClickedPosition(coordinates, drawnSensors) {
   var x = coordinates.x;
   var y = coordinates.y;
-  for (var i = 0; i < circles.length; i++) {
-    if (x < circles[i].right && x > circles[i].left && y > circles[i].top && y < circles[i].bottom) {
-      $('#exampleModal1').html(sensorInfo(circles[i].sensor_info)).foundation('open');
+  for (var i = 0; i < drawnSensors.length; i++) {
+    if (x < drawnSensors[i].right && x > drawnSensors[i].left && y > drawnSensors[i].top && y < drawnSensors[i].bottom) {
+      $('#exampleModal1').html(sensorInfo(drawnSensors[i].sensor_info)).foundation('open');
     }
   }
 }
 
 function sensorInfo(data) {
-  var html = "<h1>" + data.sensor_id + "</h1>";
+  var html = "<h1>" + data.sensor_id + "</h1><a href='/sensor/edit/" + data.sensor_id + "'>edit sensor</a>";
   html += "<p>House: " + data.position.house + "<br>";
   html += "Floor: " + data.position.floor + "</p>";
   html += "<p>Status: " + data.status + "<br>";

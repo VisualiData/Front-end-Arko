@@ -98,7 +98,12 @@ func login(w http.ResponseWriter, r *http.Request) {
 
 func notFound(w http.ResponseWriter, r *http.Request){
 	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/error/404.html")
-	t.Execute(w, r)
+	str := r.Method + " " + r.URL.Path;
+	vd := ViewData{
+		Flash: getFlashMessages(w, r),
+		Data: str,
+	}
+	t.Execute(w, vd)
 }
 
 func check_login(w http.ResponseWriter, r *http.Request){
