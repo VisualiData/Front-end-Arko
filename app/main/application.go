@@ -115,7 +115,7 @@ func check_login(w http.ResponseWriter, r *http.Request){
 func main(){
 	gob.Register(&FlashMessage{})
 	srv := &http.Server{
-		Addr: "192.168.0.18:6500",
+		Addr: "0.0.0.0:6500",
 		Handler: routes(),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout: 15 * time.Second,

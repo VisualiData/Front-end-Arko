@@ -119,9 +119,8 @@ function images() {
 // Start a server with BrowserSync to preview the site in
 function server(done) {
   browser.init({
+  // server: PATHS.dist, port: PORT
     proxy: "localhost:6500"
-    // proxy: "visualidata.local"
-    // server: PATHS.dist, port: PORT
   });
   done();
 }
@@ -140,5 +139,6 @@ function watch() {
   gulp.watch('src/assets/scss/**/*.scss').on('all', sass);
   gulp.watch('src/assets/js/**/*.js').on('all', gulp.series(javascript, browser.reload));
   gulp.watch('src/assets/img/**/*').on('all', gulp.series(images, browser.reload));
+  gulp.watch('app/main/**/*.go').on('all', browser.reload);
   // gulp.watch('src/styleguide/**').on('all', gulp.series(styleGuide, browser.reload));
 }
