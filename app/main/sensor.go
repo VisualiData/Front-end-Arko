@@ -6,11 +6,12 @@ import (
 	"github.com/gorilla/mux"
 	"fmt"
 	"html/template"
+	"strings"
 )
 
 type Sensor struct {
 	ID string `json:"sensor_id"`
-	Type string `json:"type"`
+	Type[] string `json:"types"`
 	NodeName string `json:"nodeName"`
 	NodeType string `json:"nodeType"`
 	Location Position `json:"position"`
@@ -25,7 +26,12 @@ type Position struct {
 
 func AddSensorView(w http.ResponseWriter, r *http.Request) {
 	response := &Response{0, nil, "", ""}
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/addsensor.html")
+	t, err := template.New("index.html").Funcs(template.FuncMap{"tostring": ToString, "join": Join}).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/addsensor.html")
+	if err != nil {
+		fmt.Fprint(w, "Error:", err)
+		fmt.Println("Error:", err)
+		return
+	}
 	vd := ViewData{
 		Flash: getFlashMessages(w, r),
 		Data: response,
@@ -35,7 +41,7 @@ func AddSensorView(w http.ResponseWriter, r *http.Request) {
 
 func AddSensor(w http.ResponseWriter, r *http.Request) {
 	location := Position{r.FormValue("x_coordinate"), r.FormValue("y_coordinate"), r.FormValue("floor"), "CHIBB"}
-	s := Sensor{r.FormValue("sensor_id"), r.FormValue("sensorType"), r.FormValue("nodeName"), r.FormValue("nodeType"), location, "active"}
+	s := Sensor{r.FormValue("sensor_id"), strings.Split(r.FormValue("sensorType"), ","), r.FormValue("nodeName"), r.FormValue("nodeType"), location, "active"}
 	b, err := json.Marshal(s)
 	if err != nil {
 		print(err)
@@ -49,7 +55,7 @@ func EditSensorView(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	url := BaseUrl + "/sensor/" + vars["sensor_id"]
 	result := getDataSingle(url)
-	t, err := template.New("index.html").Funcs(template.FuncMap{"tostring": ToString}).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/editsensor.html")
+	t, err := template.New("index.html").Funcs(template.FuncMap{"tostring": ToString, "join": Join}).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/editsensor.html")
 	if err != nil {
 		fmt.Fprint(w, "Error:", err)
 		fmt.Println("Error:", err)
@@ -64,7 +70,7 @@ func EditSensorView(w http.ResponseWriter, r *http.Request) {
 
 func EditSensor(w http.ResponseWriter, r *http.Request) {
 	location := Position{r.FormValue("x_coordinate"), r.FormValue("y_coordinate"), r.FormValue("floor"), "CHIBB"}
-	s := Sensor{r.FormValue("sensor_id"), r.FormValue("sensorType"), r.FormValue("nodeName"), r.FormValue("nodeType"), location, "active"}
+	s := Sensor{r.FormValue("sensor_id"), strings.Split(r.FormValue("sensorType"), ","), r.FormValue("nodeName"), r.FormValue("nodeType"), location, "active"}
 	fmt.Println(s)
 	b, err := json.Marshal(s)
 	if err != nil {

@@ -1,5 +1,6 @@
 {{ define "content" }}
-<p>{{ $floor := .Data.position.floor | tostring }}</p>
+<p>{{.}}</p>
+{{ $floor := .Data.position.floor | tostring }}
 <div class="columns large-4 align-center container-padded">
   <form method="post" action="sensor/edit">
     <div class="sign-in-form">
@@ -7,7 +8,7 @@
       <label for="sign-in-form-username">Sensor ID / Sensor name</label>
       <input type="text" name="sensor_id" placeholder="CHIBB-Node-1" value="{{ .Data.sensor_id }}" readonly required>
       <label for="sign-in-form-password">Type(s)</label>
-      <input type="text" name="sensorType" placeholder="Temperature" value="{{ .Data.type }}" required>
+      <input type="text" name="sensorType" placeholder="Temperature" value="{{ join .Data.types }}" required>
       <label for="sign-in-form-password">Node name</label>
       <input type="text" name="nodeName" value="{{ .Data.nodeName }}">
       <label for="sign-in-form-password">Node type</label>
