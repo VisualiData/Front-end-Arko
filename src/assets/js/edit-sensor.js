@@ -20,6 +20,7 @@ function loadFloorPlan() {
   var naturalHeight = 0;
   var imgWidth = 0;
   var imgHeight = 0;
+  // load floorplan image
   var image = document.createElement('img');
   image.src = '/assets/img/CHIBB_' + currentFloot + '.png';
   var canvas = document.getElementById("myCanvas");
@@ -36,10 +37,12 @@ function loadFloorPlan() {
       drawCircle(context, $('#field_x').val(), $('#field_y').val(), 8, "black");
     }
   }
+  // change floorplan image
   $('select[name="floor"]').on('change', function() {
     image.src = '/assets/img/CHIBB_' + this.value + ".png";
     context.drawImage(image, 0, 0, imgWidth, imgHeight);
   });
+  // draw circle on clicked position
   $("#myCanvas").on("click", function(event) {
     context.drawImage(image, 0, 0, imgWidth, imgHeight);
     var currentClickPosX = event.pageX - this.offsetLeft;

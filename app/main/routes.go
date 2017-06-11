@@ -10,14 +10,12 @@ func routes() *mux.Router{
 	// exclude route matching of assets folder
 	fs := http.FileServer(http.Dir("app/resources/assets/"))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
-	// start page
-	r.HandleFunc("/", home)
-	r.HandleFunc("/home/{sensor_id}", home)
-
-	r.HandleFunc("/heatmap", Heatmap)
-	// login routes
-	r.HandleFunc("/login", login).Methods("GET")
-	r.HandleFunc("/login", check_login).Methods("POST")
+	// graph page
+	r.HandleFunc("/", multiLineGraph)
+	r.HandleFunc("/visualisation", multiLineGraph)
+	r.HandleFunc("/visualisation/{house}/{floor}", multiLineGraph)
+	r.HandleFunc("/visualisation/{house}/{floor}/{sensors}/{types}", multiLineGraph)
+	r.HandleFunc("/visualisation/{house}/{floor}/{sensors}/{types}/{from}/{to}", multiLineGraph)
 	// dashboard routes
 	r.HandleFunc("/dashboard", dashboard).Name("dashboard")
 	r.HandleFunc("/dashboard/{house}", dashboard)

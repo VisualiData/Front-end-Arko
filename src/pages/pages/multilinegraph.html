@@ -1,0 +1,43 @@
+{{ define "content" }}
+<div class="16-large columns row">
+  <h1>CHIBB</h1> {{range .Data.house.floors}}
+  <a class="button" href="/visualisation/{{$.Data.house.house_id}}/{{.floor}}">Floor {{.floor}}</a> {{end}}
+</div>
+<div class="row">
+  <div class="12-large columns">
+    <svg width="960" height="500" style="margin-top:40px;"></svg>
+  </div>
+  <div class="4-large columns">
+    <div class="callout">
+      <h3>Settings</h3>
+      <h5>Sensors</h5> {{ $length := len .Data.sensors }} {{ if eq $length 0 }}
+      <p><i>No sensors found for this floor</i></p>
+      {{ else }} {{range $key, $value := index .Data "sensors"}}
+      <input id="checkbox{{$key}}" name="sensor" type="checkbox" value="{{$value.sensor_id}}"><label for="checkbox{{$key}}">{{$value.sensor_id}}</label><br> {{end}} {{end}}
+      <h5>Types</h5>
+      <input id="checkbox_temperature" name="sensor_type" type="checkbox" value="Temperature"><label for="checkbox_temperature">Temperature</label><br>
+      <input id="checkbox_pressure" name="sensor_type" type="checkbox" value="Pressure"><label for="checkbox_pressure">Pressure</label><br>
+      <input id="checkbox_people" name="sensor_type" type="checkbox" value="People"><label for="checkbox_people">People in the room</label><br>
+      <label>From<br><input type="text" id="from" class="datepicker" value="05-06-2017"><input type="hidden" id="alt_from" name="from"></label>
+      <label>To<br><input type="text" id="to" class="datepicker" value="12-06-2017"><input type="hidden" id="alt_to" name="to"></label><br>
+      <button onclick="updateGraph({{$.Data.house.house_id}}, {{.Data.floor}})" class="button">Update</button>
+    </div>
+  </div>
+</div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+  $(document).ready(function() {
+    var $j = jQuery.noConflict();
+    $("#from").datepicker({
+      dateFormat: 'dd-mm-yy'
+    });
+    $("#to").datepicker({
+      dateFormat: 'dd-mm-yy'
+    });
+    displayData({{ marshal .Data.data }}, {{.Data.selectedSensors}});
+  });
+</script>
+{{ end }}

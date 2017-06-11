@@ -1,5 +1,4 @@
 {{ define "content" }}
-<p>{{.}}</p>
 {{ $floor := .Data.position.floor | tostring }}
 <div class="columns large-4 align-center container-padded">
   <form method="post" action="sensor/edit">
@@ -26,6 +25,7 @@
   </form>
 </div>
 <div class="columns large-12 align-center container-padded" id="floor_plan_container">
+  <p><b>Select sensor location</b></p>
   <canvas id="myCanvas" style="width: 100%;">
     Your browser does not support the HTML5 canvas tag.
   </canvas>

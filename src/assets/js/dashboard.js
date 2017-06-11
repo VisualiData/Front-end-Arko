@@ -16,6 +16,7 @@ function dashboard(data) {
     };
 
     createCanvas(floor_id);
+    // load floorplan image
     var image = document.createElement('img');
     image.src = '/assets/img/' + value.floorplan;
     var canvas = document.getElementById("canvas_" + floor_id);
@@ -34,6 +35,7 @@ function dashboard(data) {
       var wanted = sensors.filter(function(item) {
         return (item.position.floor == value.floor && item.position.house == house.house_id);
       });
+      // loop over every sensor of the floor
       wanted.forEach(function(sensor) {
         var color = "red";
         if (sensor.status == "active") {
@@ -62,11 +64,11 @@ function dashboard(data) {
     checkClickedPosition(clickedCoordinates, drawnSensors);
   });
 }
-
+// create html stuff for the floorplan
 function createCanvas(floor_id) {
   var $div = $("<div>", {
     id: floor_id,
-    "class": "columns large-12"
+    "class": "columns small-16 large-12"
   });
   $("#floor_plan_container").append($div);
   $('<p></p>', {
@@ -80,7 +82,7 @@ function createCanvas(floor_id) {
     'style': 'width: 100%'
   }).appendTo("#" + floor_id);
 }
-
+// get coordinates of clicked position
 function getClickedCoordinates(event, _self, floor_plan) {
   var canvas = document.getElementById(floor_plan["canvas"]);
   var clickedX = event.pageX - _self.offsetLeft;
@@ -92,7 +94,7 @@ function getClickedCoordinates(event, _self, floor_plan) {
     "y": naturalClickPosY
   };
 }
-
+// check if there is a circle on the clicked position
 function checkClickedPosition(coordinates, drawnSensors) {
   var x = coordinates.x;
   var y = coordinates.y;
@@ -102,7 +104,7 @@ function checkClickedPosition(coordinates, drawnSensors) {
     }
   }
 }
-
+// create sensor info html
 function sensorInfo(data) {
   var html = "<h1>" + data.sensor_id + "</h1><a href='/sensor/edit/" + data.sensor_id + "'>edit sensor</a>";
   html += "<p>House: " + data.position.house + "<br>";
@@ -114,7 +116,7 @@ function sensorInfo(data) {
   html += '<button class="close-button" data-close aria-label="Close reveal" type="button"><span aria-hidden="true">&times;</span></button>';
   return html;
 }
-
+// fill the sensorlist with sensors
 function fillSensorList(data) {
   for (var i = 0; i < data.length; i++) {
     if (!$('#floor' + data[i].position.floor).length) {
