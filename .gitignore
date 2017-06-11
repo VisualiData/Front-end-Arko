@@ -3,6 +3,7 @@ node_modules
 *.log
 bower_components
 dist
+app/resources
 *.swp
 .idea
 *.exe*

@@ -60,7 +60,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 		url = BaseUrl + "/sensor/"+ vars["sensor_id"]+"/" + two_days_ago + "/" + current_time + "/Temperature"
 	}
 	result := getData(url)
-	t, err := template.New("index.html").Funcs(template.FuncMap{"marshal": Marshal}).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/home.html")
+	t, err := template.New("index.html").Funcs(template.FuncMap{"marshal": Marshal}).ParseFiles("app/resources/index.html", "app/resources/includes/nav.html", "app/resources/includes/message.html", "app/resources/pages/home.html")
 	if err != nil {
 		fmt.Fprint(w, "Error:", err)
 		fmt.Println("Error:", err)
@@ -84,9 +84,9 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 
 	house := getDataSingle(get_house_url)
 	sensors := getData(get_sensors_url)
-	if len(sensors.Data) > 0 {
+	//if len(sensors.Data) > 0 {
 		t, err := template.New("index.html").Funcs(template.FuncMap{"marshal": Marshal}).
-				ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/dashboard.html")
+				ParseFiles("app/resources/index.html", "app/resources/includes/nav.html", "app/resources/includes/message.html", "app/resources/pages/dashboard.html")
 		if err != nil {
 			fmt.Fprint(w, "Error:", err)
 			fmt.Println("Error:", err)
@@ -98,18 +98,18 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 			Data: values,
 		}
 		t.Execute(w, vd)
-	}else {
-		notFound(w, r)
-	}
+	//}else {
+	//	notFound(w, r)
+	//}
 }
 
 func login(w http.ResponseWriter, r *http.Request) {
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/login.html")
+	t, _ := template.ParseFiles("app/resources/index.html", "app/resources/includes/nav.html", "app/resources/includes/message.html", "app/resources/pages/login.html")
 	t.Execute(w, r)
 }
 
 func notFound(w http.ResponseWriter, r *http.Request){
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/error/404.html")
+	t, _ := template.ParseFiles("app/resources/index.html", "app/resources/includes/nav.html", "app/resources/includes/message.html", "app/resources/error/404.html")
 	str := r.Method + " " + r.URL.Path;
 	vd := ViewData{
 		Flash: getFlashMessages(w, r),
@@ -119,7 +119,7 @@ func notFound(w http.ResponseWriter, r *http.Request){
 }
 
 func check_login(w http.ResponseWriter, r *http.Request){
-	t, _ := template.ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/login.html")
+	t, _ := template.ParseFiles("app/resources/index.html", "app/resources/includes/nav.html", "app/resources/includes/message.html", "app/resources/pages/login.html")
 	fmt.Println(r.FormValue("username"))
 	fmt.Println(r.FormValue("password"))
 	t.Execute(w, r)

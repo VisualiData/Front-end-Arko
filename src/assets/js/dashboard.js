@@ -108,7 +108,7 @@ function sensorInfo(data) {
   html += "<p>House: " + data.position.house + "<br>";
   html += "Floor: " + data.position.floor + "</p>";
   html += "<p>Status: " + data.status + "<br>";
-  html += "Type: " + data.type + "<br>";
+  html += "Type: " + data.types + "<br>";
   html += "Node: " + data.nodeName + "<br>";
   html += "Node type: " + data.nodeType + "</p>";
   html += '<button class="close-button" data-close aria-label="Close reveal" type="button"><span aria-hidden="true">&times;</span></button>';

@@ -8,7 +8,7 @@ import (
 func routes() *mux.Router{
 	r := mux.NewRouter()
 	// exclude route matching of assets folder
-	fs := http.FileServer(http.Dir("dist/assets/"))
+	fs := http.FileServer(http.Dir("app/resources/assets/"))
 	r.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fs))
 	// start page
 	r.HandleFunc("/", home)

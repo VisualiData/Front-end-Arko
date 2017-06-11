@@ -26,7 +26,7 @@ type Position struct {
 
 func AddSensorView(w http.ResponseWriter, r *http.Request) {
 	response := &Response{0, nil, "", ""}
-	t, err := template.New("index.html").Funcs(template.FuncMap{"tostring": ToString, "join": Join}).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/addsensor.html")
+	t, err := template.New("index.html").Funcs(template.FuncMap{"tostring": ToString, "join": Join}).ParseFiles("app/resources/index.html", "app/resources/includes/nav.html", "app/resources/includes/message.html", "app/resources/pages/addsensor.html")
 	if err != nil {
 		fmt.Fprint(w, "Error:", err)
 		fmt.Println("Error:", err)
@@ -55,7 +55,7 @@ func EditSensorView(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	url := BaseUrl + "/sensor/" + vars["sensor_id"]
 	result := getDataSingle(url)
-	t, err := template.New("index.html").Funcs(template.FuncMap{"tostring": ToString, "join": Join}).ParseFiles("dist/index.html", "dist/includes/nav.html", "dist/includes/message.html", "dist/pages/editsensor.html")
+	t, err := template.New("index.html").Funcs(template.FuncMap{"tostring": ToString, "join": Join}).ParseFiles("app/resources/index.html", "app/resources/includes/nav.html", "app/resources/includes/message.html", "app/resources/pages/editsensor.html")
 	if err != nil {
 		fmt.Fprint(w, "Error:", err)
 		fmt.Println("Error:", err)
