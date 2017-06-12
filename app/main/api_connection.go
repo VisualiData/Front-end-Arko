@@ -9,7 +9,7 @@ import (
 	"fmt"
 )
 
-var BaseUrl = "http://192.168.0.18:4567";
+var BaseUrl = "http://localhost:4567";
 var API_Key = "dev";
 
 type Response struct {

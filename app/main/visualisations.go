@@ -17,25 +17,8 @@ func multiLineGraph(w http.ResponseWriter, r *http.Request){
 	}
 	for _, element := range strings.Split(vars["sensors"], ","){
 		sensorUrl := BaseUrl + "/sensor/"+ element + "/" + vars["from"] + "/" + vars["to"] + "/" + vars["types"]
-		fmt.Println(sensorUrl)
 		results = append(results, getData(sensorUrl).Data)
 	}
-	//fmt.Println(strings.Split(vars["sensors"], ","))
-	//fmt.Println(url)
-	//fmt.Println(getData(url))
-	//current_time := time.Now().Format(time.RFC3339)
-	//two_days_ago := time.Now().AddDate(0, 0, -2).Format(time.RFC3339)
-	//
-	//sensorurl := BaseUrl + "/sensor/CHIBB-Test-01/" + vars["from"] + "/" + vars["to"] + "/" + vars["types"]
-	//fmt.Println(sensorurl)
-	//results = append(results, getData(sensorurl).Data)
-	//results = append(results, getData(sensorurl).Data)
-	//fmt.Println(results)
-	//if vars["sensor_id"] != "" {
-	//	url = BaseUrl + "/sensor/"+ vars["sensor_id"]+"/" + two_days_ago + "/" + current_time + "/Temperature"
-	//}
-	//fmt.Println(getData(sensorurl))
-	//result := getData(url)
 	t, err := template.New("index.html").Funcs(template.FuncMap{"marshal": Marshal}).ParseFiles("app/resources/index.html", "app/resources/includes/nav.html", "app/resources/includes/message.html", "app/resources/pages/multilinegraph.html")
 	if err != nil {
 		fmt.Fprint(w, "Error:", err)

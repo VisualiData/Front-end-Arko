@@ -58,13 +58,6 @@ function displayData(input, sensors) {
       .attr("stroke-linecap", "round")
       .attr("stroke-width", 1.5)
       .attr("d", line);
-    // g.append("text")
-    //   // .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; })
-    //   .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")"; })
-    //   .attr("x", 3)
-    //   .attr("dy", "0.35em")
-    //   .style("font", "10px sans-serif")
-    //   .text("test");
   }
   // add axis labels
   g.append("g")
